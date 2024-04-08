@@ -1,0 +1,14 @@
+<nav class="navbar">
+	<!-- Render items excluding subgroups -->
+	{% for item in topbar.items %} {% if not item.__class__.__name__ ==
+	'Subgroup' %} {{ item.render() }} {% endif %} {% endfor %}
+	<!-- Manually create dropdown menu for 'Block Ciphers' -->
+	<div class="dropdown">
+		<button class="dropbtn">Block Ciphers</button>
+		<div class="dropdown-content">
+			<a href="{{ url_for('CBC') }}">CBC</a>
+			<a href="{{ url_for('CTR') }}">CTR</a>
+			<a href="{{ url_for('OFB') }}">OFB</a>
+		</div>
+	</div>
+</nav>
