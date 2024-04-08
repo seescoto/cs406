@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+#build/ #allow for freeze.py to save static files in build
 develop-eggs/
 dist/
 downloads/
