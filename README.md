@@ -25,3 +25,9 @@ cd ./CalculatorMicroservice; flask --app app run
 4. Follow the instructions in the terminal that leads you to opening 127.0.0.1:5000 in your favorite browser
 
 5. Explore and enjoy!
+
+6. To exit out of the app when you're done, type in control + C into the command line and the app will close on its own.
+
+```sh
+^C
+```
