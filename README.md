@@ -19,7 +19,7 @@ pip install -r requirements.txt
 3. Navigate to the folder that holds this repository and run the app
 
 ```sh
-cd ./CalculatorMicroservice; flask --app app run
+flask --app app run
 ```
 
 4. Follow the instructions in the terminal that leads you to opening 127.0.0.1:5000 in your favorite browser
