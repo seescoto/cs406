@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, request, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_nav import Nav
+import src.schemes as schemes
 
 # run with 'flask --app FILENAME run'
 
@@ -39,7 +40,20 @@ def index():
 
 @app.route('/OTP')
 def OTP():
-    return render_template('OTP.html', topbar=topbar)
+    # encryption = None b/c no plaintext or key is in it yet
+    return render_template('OTP.html', topbar=topbar, encryption=None)
+
+
+@app.route('/OTP-encrypt', methods=['POST'])
+def OTPEncrypt():
+
+    plaintext = request.form.get('input_text')
+    key = request.form.get('key')
+    ciphertext = schemes.OTP(plaintext, key)
+    # save all data in a dict to keep and display
+    encryption = {"plaintext": plaintext, "key": key, "ciphertext": ciphertext}
+
+    return render_template('OTP.html', topbar=topbar, encryption=encryption)
 
 
 @app.route('/CBC')

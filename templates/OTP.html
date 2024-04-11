@@ -11,5 +11,35 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>One-Time Pad</h1>
+
+		<form action="/OTP-encrypt" method="post">
+
+			<br>
+			<label for="key">
+				Enter your password/phrase. This should be something that's easy to remember for both
+				you and the person you want to send encrypted messages with.
+			</label>
+			<br />
+			<input type="text" id="key" name="key"/>
+			<br><br>
+
+			<label for="input_text">
+				Enter the message you'd like to encrypt:
+			</label>
+			<br />
+			<textarea id="input_text" name="input_text" rows="5" cols="50"></textarea>
+			<br />
+
+			</br>
+
+			<input type="submit" value="Submit" />
+		</form>
+
+		{% if encryption %}
+		<h2>Your encrypted ciphertext</h2>
+		<textarea rows="5" cols="50">
+			{{encryption['ciphertext']}}
+		</textarea>
+		{% endif %}
 	</body>
 </html>
