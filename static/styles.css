@@ -8,6 +8,9 @@
 h1 {
 	text-align: center;
 }
+h2 {
+	text-align: center;
+}
 
 /* Style the navbar container */
 .navbar {
@@ -34,17 +37,6 @@ h1 {
 /* Add active class to the current link */
 .active {
 	background-color: var(--lgrey);
-}
-
-/* change ul for no padding or line style so it doesnt mess with navbar*/
-ul {
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	background-color: var(--dgrey);
-}
-li {
-	float: left;
 }
 
 /* Dropdown button */

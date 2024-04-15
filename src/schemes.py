@@ -1,5 +1,7 @@
+# use this if running via flask otherwise get 'no module named util' error
 from . import util
-# import util
+
+# import util #use this if running schemes.py via terminal
 
 
 def XOR(arr1, arr2):
@@ -19,17 +21,14 @@ def OTP(plaintext, key, binary=False):
         return None
 
     # transform plaintext and key into integers so can be XORed
+    # convert plaintext - depends on format of plaintext
     if binary:
         intPlain = util.binaryStringToIntArray(plaintext)
     else:
         intPlain = util.stringToIntArray(plaintext)
-
     intKey = util.stringToIntArray(util.matchLength(key, len(intPlain)))
+
     intCipher = XOR(intPlain, intKey)
-    binCipher = util.intArrayToBinaryString(intCipher)
 
-    return binCipher
-
-
-# not working, giving weird non consistent answers
-# OTP(c, k) here prints m[1:] not m (so the message without the first letter), but it says they're equal??
+    # return binary string of ciphertext
+    return util.intArrayToBinaryString(intCipher)

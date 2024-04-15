@@ -13,7 +13,6 @@
 		<h1>One-Time Pad</h1>
 
 		<form action="/OTP-encrypt" method="post">
-
 			<br>
 			<label for="key">
 				Enter your password/phrase. This should be something that's easy to remember for both
@@ -39,7 +38,7 @@
 		</form>
 
 		{% if encryption %}
-			<h2><center>Your encrypted ciphertext</center></h2>
+			<h2>Your encrypted ciphertext</h2>
 			<p> 
 				Note: not all ASCII values are printable using text, so if you're encrypting text, 
 				your ciphertext on the bottom (the text version) may look weird. The binary representation
@@ -59,20 +58,109 @@
 
 		<details class="beginner-explanation">
 			<summary>Click for a beginner's explanation of one-time pad encryption</summary>
-			<ul>
-				<li>Option 1</li>
-				<li>Option 2</li>
-				<li>Option 3</li>
-			</ul>
+				<p>
+					Computers use binary code to represent everything. Binary code is just a different way
+					of writing numbers, and we use 'ASCII' to convert those numbers into characters like numbers 
+					or letters.
+				</p>
+				<p>
+					Both the key (your password) and plaintext (the message you'd like to send) that you're using 
+					to encrypt things are strings of characters, so we can convert them both into numbers
+					using binary code.
+				</p>
+				<p>
+					We can combine your key and plaintext with a special operation called 'XOR' to create a 
+					new string of characters, the ciphertext (your encrypted message). This is sort of like taking 
+					two numbers and adding them up to get a new one.
+					To decrypt your message, we use the ciphertext and the key to back-track our way into finding our 
+					original message.
+				</p>
+				<p>
+					Example: 
+					
+					<ul>
+						<li>
+							Imagine that you and your friend both agree that your favorite number is 105. This is 
+							your key. 
+						</li>
+						<li>
+							Now pretend that you have a secret number you'd like to send to your friend, but you 
+							don't want anyone else to know, your plaintext. We can let our plaintext be the number 32.
+						</li>
+						<li>
+							Using the principles of a one-time pad, you can add your key and your plaintext 
+							together to get 105 + 32 = 137, your ciphertext.
+						</li>
+						<li>
+							Now you can send your ciphertext, 137, to your friend, and anyone who doesn't know your 
+							key still doesn't know anything about your original number. Your friend, however, knows 
+							that to get the original number, they just have to subtract your favorite number (your 
+							key) from the new number, and they can get 137 - 105 = 32.
+						</li>
+						<li>
+							Now you and your friend both know what the original number is, but you've kept it a 
+							secret. Even if someone else heard you tell your friend that the new number is 137, they 
+							won't know anything about the original number because they didn't know your key.
+						</li>
+					</ul>
+			
+				</p>
+			
 		</details>
 
 		<details class="advanced-explanation">
 			<summary>Click for a more advanced explanation of one-time pad encryption</summary>
-			<ul>
-				<li>Option 1</li>
-				<li>Option 2</li>
-				<li>Option 3</li>
-			</ul>
+			<p>
+				To truly understand how a one-time pad works, we must first understand what the operation 'XOR' is.
+				XOR is a bit-wise binary operator, meaning that it works on two inputs (like our key and plaintext)
+				and goes bit by bit, meaning that it operates on each digit separately. 
+			</p>
+			<p>
+				Here is a table that describes the operation XOR. If you have two 0's, 0 XOR 0 = 0. If you have a 
+				0 and a 1, 0 XOR 1 = 1 XOR 0 = 1. If you have two 1's, 1 XOR 1 = 0.
+			</p>
+			<img src="../static/images/xor.png" alt="XOR table">
+			<p>
+				There are a few properties of XOR that makes it really useful for one-time pads. 
+
+				<ul>
+					<li>
+						XOR is a commutative operation, meaning that for any two numbers <i>a, b</i>, 
+						<i>a</i> XOR <i>b = b</i> XOR <i>a</i>. That means that it doesn't matter what order
+						numbers are XORed in, the result will always be the same.
+					</li>
+					<li>
+						XOR is an associative operation, meaning that for any three numbers <i>a, b, c</i>,
+						<i>(a</i> XOR <i>b)</i> XOR <i>c = a</i> XOR <i>(b</i> XOR <i>c)</i>.
+					</li>
+					<li>
+						A number XORed with itself will always result in a string of 0's. This is because 0 XOR 0 = 
+						1 XOR 1 = 0.
+					</li>
+					<li>
+						A number XORed with a string of 0's will always result in itself. This is because 1 XOR 0 = 1 
+						and 0 XOR 0 = 0.
+					</li>
+				</ul>
+			</p>
+			<p>
+				It's because of these properties that one-time pad has the same algorithm for both encryption and 
+				decryption. Let's represent our plaintext, key, and ciphertext with the symbols <i>p, k, c</i> respectively.
+				Our encryption gives us <i>p</i> XOR <i>k = c</i>
+			</p>
+			<p> 
+				Then we decrypt with <i>c</i> XOR <i>k</i>. However, since <i>c = p</i> XOR <i>k</i>, then our 
+				decryption is really <i>(p</i> XOR <i>k)</i> XOR <i>k</i>. 
+			</p>
+			<p>
+				Because XOR-ing is associative, we can switch up the grouping of our numbers. That means that our 
+				decryption is also <i>p</i> XOR <i>(k</i> XOR <i>k)</i>.
+			</p>
+			<p>
+				We know that XOR-ing anything with itself gives a string of 0's, so <i>k</i> XOR <i>k</i> is a 
+				string of 0's. We also know that anything XORed with a string of 0's is itself, so since <i>p</i>
+				is being XORed with a string of 0's in the decryption, our decryption ends up being <i>p</i> itself.
+			</p>
 		</details>
 
 
