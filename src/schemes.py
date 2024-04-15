@@ -1,4 +1,5 @@
-import util
+from . import util
+# import util
 
 
 def XOR(arr1, arr2):
@@ -9,30 +10,26 @@ def XOR(arr1, arr2):
     return [arr1[i] ^ arr2[i] for i in range(len(arr1))]
 
 
-def OTP(plaintext, key):
+def OTP(plaintext, key, binary=False):
     # takes a key and a plaintext and XORS them to create the encrypted ciphertext
+    # binary is a bool variable that says if the plaintext is in binary format or in text
 
     # if no key given, return none
     if not key:
         return None
 
     # transform plaintext and key into integers so can be XORed
-    intPlain = util.stringToIntArray(plaintext)
-    intKey = util.stringToIntArray(util.matchLength(key, len(plaintext)))
+    if binary:
+        intPlain = util.binaryStringToIntArray(plaintext)
+    else:
+        intPlain = util.stringToIntArray(plaintext)
+
+    intKey = util.stringToIntArray(util.matchLength(key, len(intPlain)))
     intCipher = XOR(intPlain, intKey)
-    stringCipher = util.intArrayToString(intCipher)
+    binCipher = util.intArrayToBinaryString(intCipher)
 
-    return stringCipher
-
-
-m = 'hello my name is sofia escoto'
-k = 'h'
-c = OTP(m, k)
-print(c)
-print(OTP(c, k))
-print(m)
-print(OTP(c, k) == m)
+    return binCipher
 
 
 # not working, giving weird non consistent answers
-# OTP(c, k) here prints m[1:] not m (so the message without the first letter, h), but it says they're equal??
+# OTP(c, k) here prints m[1:] not m (so the message without the first letter), but it says they're equal??

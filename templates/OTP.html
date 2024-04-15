@@ -24,11 +24,14 @@
 			<br><br>
 
 			<label for="input_text">
-				Enter the message you'd like to encrypt:
+				Enter the message you'd like to encrypt/decrypt:
 			</label>
 			<br />
 			<textarea id="input_text" name="input_text" rows="5" cols="50"></textarea>
 			<br />
+
+			<input type="checkbox" id="binary" name="binary" value=True>
+  			<label for="binary"> My message is in binary format </label><br>
 
 			</br>
 
@@ -36,10 +39,43 @@
 		</form>
 
 		{% if encryption %}
-		<h2>Your encrypted ciphertext</h2>
-		<textarea rows="5" cols="50">
-			{{encryption['ciphertext']}}
-		</textarea>
+			<h2><center>Your encrypted ciphertext</center></h2>
+			<p> 
+				Note: not all ASCII values are printable using text, so if you're encrypting text, 
+				your ciphertext on the bottom (the text version) may look weird. The binary representation
+				on the top is what you should copy and paste if you'd like to decrypt it.
+			</p>
+			<textarea label="ciphertextBinary" rows="5" cols="50">
+				{{encryption['ciphertextBinary']}}
+			</textarea>
+			<p> = </p>
+			<textarea label="ciphertextReg" rows="5" cols="50">
+				{{encryption['ciphertextReg']}}
+			</textarea>
+
 		{% endif %}
+
+		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click for a beginner's explanation of one-time pad encryption</summary>
+			<ul>
+				<li>Option 1</li>
+				<li>Option 2</li>
+				<li>Option 3</li>
+			</ul>
+		</details>
+
+		<details class="advanced-explanation">
+			<summary>Click for a more advanced explanation of one-time pad encryption</summary>
+			<ul>
+				<li>Option 1</li>
+				<li>Option 2</li>
+				<li>Option 3</li>
+			</ul>
+		</details>
+
+
+
 	</body>
 </html>

@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_nav import Nav
 import src.schemes as schemes
+import src.util as util
 
 # run with 'flask --app FILENAME run'
 
@@ -49,9 +50,12 @@ def OTPEncrypt():
 
     plaintext = request.form.get('input_text')
     key = request.form.get('key')
-    ciphertext = schemes.OTP(plaintext, key)
+    binary = request.form.get('binary')
+    ciphertextBinary = schemes.OTP(plaintext, key, binary)
+    ciphertextReg = util.binaryStringToString(ciphertextBinary)
     # save all data in a dict to keep and display
-    encryption = {"plaintext": plaintext, "key": key, "ciphertext": ciphertext}
+    encryption = {"plaintext": plaintext, "key": key,
+                  "ciphertextBinary": ciphertextBinary, "ciphertextReg": ciphertextReg}
 
     return render_template('OTP.html', topbar=topbar, encryption=encryption)
 
