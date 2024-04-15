@@ -36,8 +36,17 @@ def intArrayToBinaryString(arr):
 
 
 def binaryStringToString(binString):
-    binString = binString.split(" ")
+    #given a binary string, return it as a string w/ bytes converted to chars
+    
+    if (re.findall(r'\s+', binString)):
+        # if contains whitespace, split by whitespace
+        binString = binString.split()
+    else:
+        # else split so each binByte has 8 chars in it
+        binString = [binString[i:i+8] for i in range(0, len(binString), 8)]
+        
     charArray = [chr(int(i, 2)) for i in binString]
+    
     return "".join(charArray)
 
 
