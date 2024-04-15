@@ -14,9 +14,8 @@ def intArrayToString(arr):
     return "".join([chr(i) for i in arr])
 
 
-def binaryStringToIntArray(binString):
-    # given a string of 0's and 1's (as characters)
-    # convert it to an int array where each 'byte' becomes an integer in the array
+def splitBinaryToBytes(binString):
+    # split a string of 0's and 1's into a string array split by byte
 
     if (re.findall(r'\s+', binString)):
         # if contains whitespace, split by whitespace
@@ -25,6 +24,14 @@ def binaryStringToIntArray(binString):
         # else split so each binByte has 8 chars in it
         binString = [binString[i:i+8] for i in range(0, len(binString), 8)]
 
+    return binString
+
+
+def binaryStringToIntArray(binString):
+    # given a string of 0's and 1's (as characters)
+    # convert it to an int array where each 'byte' becomes an integer in the array
+
+    binString = splitBinaryToBytes(binString)
     return [int(binByte, 2) for binByte in binString]
 
 
@@ -36,17 +43,11 @@ def intArrayToBinaryString(arr):
 
 
 def binaryStringToString(binString):
-    #given a binary string, return it as a string w/ bytes converted to chars
-    
-    if (re.findall(r'\s+', binString)):
-        # if contains whitespace, split by whitespace
-        binString = binString.split()
-    else:
-        # else split so each binByte has 8 chars in it
-        binString = [binString[i:i+8] for i in range(0, len(binString), 8)]
-        
+    # given a binary string, return it as a string w/ bytes converted to chars
+
+    binString = splitBinaryToBytes(binString)
     charArray = [chr(int(i, 2)) for i in binString]
-    
+
     return "".join(charArray)
 
 
