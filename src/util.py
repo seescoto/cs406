@@ -1,5 +1,6 @@
 # utility functions
 import re  # regex
+import random  # random for psuedo random generator
 
 
 def stringToIntArray(string):
@@ -73,3 +74,31 @@ def elongate(string, length):
     newString += string[0:numAddedLetters]
 
     return newString
+
+
+def PRG(seedArr):
+    # length doubling psuedo-random generator
+    # takes an int arr of length n and returns a psuedorandom int arr of length 2n
+    # indistinguishable from random given that seed is uniform and not used for anything else
+    # can't be proven to be secure without proving P = NP
+
+    length = len(seedArr)
+    # deterministic, uses same seed for same input
+    random.seed(seedArr[length//2])
+
+    # given two deterministically found coefficients, multiply each int in the arr by a coefficient
+    # and add another value to it before modding 256 (so it's still ascii) and combine into new array
+    # combine in a zipper, so an int in position k will have been multiplied by coeff1,
+    # one in position k+1 will have been multiplied by coeff2
+    coeff1 = random.randint(1, 100)
+    coeff2 = random.randint(1, 100)
+    # add a number after multiplying so not all odd/even elements are divisible by a given coefficient
+    added = random.randint(0, 100)
+    newArr = [0] * 2 * length
+    for i in range(2*length):
+        if (i % 2 == 0):
+            newArr[i] = (coeff1 * (seedArr[i//2]) + added) % 256
+        else:
+            newArr[i] = (coeff2 * seedArr[i//2] + added) % 256
+
+    return newArr
