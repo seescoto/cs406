@@ -16,6 +16,7 @@ nav = Nav()
 topbar = Navbar('',
                 View('Home', 'index'),
                 View('One-Time Pad', 'OTP'),
+                View('Symmetric Ratchet', 'ratchet'),
                 Subgroup(
                     'Block Ciphers',
                     Link('CBC', 'CBC'),
@@ -58,6 +59,11 @@ def OTPEncrypt():
                   "ciphertextBinary": ciphertextBinary, "ciphertextReg": ciphertextReg}
 
     return render_template('OTP.html', topbar=topbar, encryption=encryption)
+
+
+@app.route('/symmetric-ratchet')
+def ratchet():
+    return render_template('ratchet.html', topbar=topbar)
 
 
 @app.route('/CBC')
