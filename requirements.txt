@@ -4,7 +4,6 @@ dominate==2.9.1
 Flask==3.0.3
 flask-nav==0.6
 Flask-Navigation==0.2.0
-Frozen-Flask==1.0.2
 importlib_metadata==7.1.0
 itsdangerous==2.1.2
 Jinja2==3.1.3
