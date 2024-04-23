@@ -32,3 +32,7 @@ def OTP(plaintext, key, binary=False):
 
     # return binary string of ciphertext
     return util.intArrayToBinaryString(intCipher)
+
+
+def ratchet(plaintext, key, binary=False):
+    return True
