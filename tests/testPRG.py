@@ -1,6 +1,6 @@
 # testing that PRG in util is (relatively) indistinguishable from random (using random package)
-import util
 import random
+from src import util
 
 
 def genRandomArray(n):
@@ -48,20 +48,22 @@ def test(tests, arrLength):
     print("mean of PRG generated array: \t\t\t" + str(meanPRG))
     print("mean of randomly generated array: \t\t" + str(meanRand))
     print("avg. range of PRG generated array: \t\t" + str(rangePRG))
-    print("avg. range of randly generated array: \t\t" + str(rangeRand))
+    print("avg. range of randomly generated array: \t" + str(rangeRand))
 
 
-# test(10000, 100)
+if __name__ == '__main__':
+    test(50000, 100)
+
 """
-results of test(10000, 100) = 
+results = 
 
-mean of PRG generated array:                    127.46439600000036
-mean of randomly generated array:               127.44039299999964
-avg. range of PRG generated array:              250.26089999999982
-avg. range of randly generated array:           250.8373999999999
+mean of PRG generated array:                    127.52592759999985
+mean of randomly generated array:               127.53594820000045
+avg. range of PRG generated array:              250.20755999999923
+avg. range of randomly generated array:         250.85752000000087
 
 Summary results are very similar for both randomly generated array using random package (tested PRG) and 
 my own prg (non-tested) and look indistinuishable (though range of randomly generated is slightly higher). 
-Because no PRG has been proven to be secure, this is probably the best test of reliability for the randomness 
+Because no PRG has been proven to be secure, this seems like a sufficient test of reliability for the randomness 
 we can get.
 """

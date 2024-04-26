@@ -46,37 +46,3 @@ def ratchet(key, loops=1, binary=False):
         t = total[halfway:]
 
     return (s, t)
-
-
-# binary key, string plaintext
-'''
-binKey = util.stringToBinaryString("hey")
-plain = "hello my name is sofia"
-cipher = OTP(plain, binKey, binaryKey=True)
-print(util.binaryStringToString(OTP(cipher, binKey, binaryPT=True, binaryKey=True)))
-'''
-
-# string key, string plaintext
-'''
-k = 'hey'
-plain = 'hello my name is sofia'
-cipher = OTP(plain, k)
-print(util.binaryStringToString(OTP(cipher, k, binaryPT=True)))
-'''
-
-# string key, binary plaintext
-"""
-k = 'hey'
-binPlain = util.stringToBinaryString("hello my name is sofia")
-cipher = OTP(binPlain, k, binaryPT=True)
-print(util.binaryStringToString(OTP(cipher, k, binaryPT=True, binaryKey=False)))
-"""
-
-
-# binary key, binary plaintext
-'''
-binKey = util.stringToBinaryString("hey")
-binPlain = util.stringToBinaryString("hello my name is sofia")
-cipher = OTP(binPlain, binKey, binaryPT=True, binaryKey=True)
-print(util.binaryStringToString(OTP(cipher, binKey, binaryPT=True, binaryKey=True)))
-'''
