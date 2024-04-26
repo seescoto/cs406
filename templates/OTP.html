@@ -46,26 +46,35 @@
 
 			<p> 
 				Note: not all ASCII values are printable using text, so if you're encrypting text, 
-				your ciphertext on the bottom (the text version) may look weird. The binary representation
+				your ciphertext on the right (the text version) may look weird. The binary representation
 				on the top is what you should copy and paste if you'd like to decrypt it.
 			</p>
 
-			<textarea label="ciphertextBinary" rows="5" cols="50">
-				{{encryption['ciphertextBinary']}}
-			</textarea>
-			<br>
-			<button onclick="copyText('{{ encryption['ciphertextBinary'] }}')">Copy to clipboard</button>
-    		<br />
+			<div class="container">
+				<div class="column">
+					<center>
+						<h3>Binary</h3>
+						<div class="box"> 
+							{{encryption['ciphertextBinary']}}
+						</div> 
+						<br>
+						<button onclick="copyText('{{ encryption['ciphertextBinary'] }}')">Copy to clipboard</button>
+						<br />
+					</center>
+				</div>
 
-			<p> = </p>
-
-			<textarea label="ciphertextReg" rows="5" cols="50">
-				{{encryption['ciphertextReg']}}
-			</textarea>
-			<br>
-			<button onclick="copyText('{{ encryption['ciphertextReg'] }}')">Copy to clipboard</button>
-    		<br />
-
+				<div class="column">
+					<center>
+						<h3>Text</h3>
+						<div class="box"> 
+							{{encryption['ciphertextReg']}}
+						</div> 
+						<br>
+						<button onclick="copyText('{{ encryption['ciphertextReg'] }}')">Copy to clipboard</button>
+						<br />
+					</center>
+				</div>
+			</div>
 
 			<script>
 				function copyText(txt) {

@@ -17,17 +17,14 @@ h4 {
 	border: 1px solid var(--dgrey);
 }
 
-/* allow for columned stuff in 2 columns */
-.column {
-	float: center;
-	width: 50%;
+/* rows and columns stuff */
+.container {
+	display: flex; /* Use flexbox */
+	justify-content: space-between; /* Distribute space between columns */
 }
 
-/* Clear floats after the columns */
-.row:after {
-	content: "";
-	display: table;
-	clear: both;
+.column {
+	flex: 1; /* Each column takes up equal space */
 }
 
 /* Style the navbar container */
