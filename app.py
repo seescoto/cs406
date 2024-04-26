@@ -1,8 +1,7 @@
 from flask import Flask, request, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_nav import Nav
-import src.schemes as schemes
-import src.util as util
+from src import schemes, util
 
 # run with 'flask --app FILENAME run'
 
@@ -72,7 +71,23 @@ def OTPEncrypt():
 
 @app.route('/symmetric-ratchet')
 def ratchet():
-    return render_template('ratchet.html', topbar=topbar)
+    return render_template('ratchet.html', topbar=topbar, results=None)
+
+
+@app.route('/sr-activate', methods=['POST'])
+def srActivate():
+    key = request.form.get('key')
+    binaryKey = request.form.get('binaryKey')
+    loops = int(request.form.get('loops'))
+    results = {}
+
+    if (key):
+        s, t = schemes.ratchet(key, loops, binary=binaryKey)
+        s = util.intArrayToBinaryString(s)
+        t = util.intArrayToBinaryString(t)
+        results = {"s": s, "t": t}
+
+    return render_template('ratchet.html', topbar=topbar, results=results)
 
 
 @app.route('/CBC')

@@ -57,5 +57,87 @@
 				your past messages said.
 			</p>
 		</details>
+
+		<form action="/sr-activate" method="post">
+			<br>
+			<label for="key">
+				Enter your original key. This should be a word or phrase that's easy to remember for both
+				you and the person you want to send encrypted messages with.
+			</label>
+			<br />
+			<textarea id="key" name="key" rows="1" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryKey" name="binaryKey" value=True>
+  			<label for="binaryKey"> My message is in binary format </label><br>
+			<br>
+
+			<label for="loops">
+				I'd like to get the <i>nth</i> 
+					(<input type="number" id="loops" name="loops" min="1" max="100" value="1"/>)
+				next key & seed.
+			</label>
+
+			<details class="loops">
+				<summary>What does it mean to get the <i>nth</i> next key & seed?</summary>
+				<p>
+					As discussed in the previous section (why would I want to generate new keys?), you can your 
+					partner can generate new keys as many times as you'd like, all from the same original key. If 
+					you're just looking to get the next key from your original, select '1'. Similarly, if you've 
+					already used your next key and want to get an additional one after that, select '2'. 
+					Use this logic as many times as you'd like.
+				</p>
+				<p>
+					The general rule is that if you select any integer <i>n</i> here, that's the same
+					as manually generating new keys and seeds <i>n - 1</i> times with your results. For example, 
+					selecting '2' will get you the same result as inputting a key <i>k</i> and selecting '1', getting 
+					<i>t</i> and <i>s</i>, and then inputting <i>s</i> to get a second new key and seed. 
+				</p>
+
+			</details>
+
+
+			</br>
+			<input type="submit" value="Submit" />
+		</form>
+
+		{% if results %}
+			<h2>Results</h2>
+			<div class="row">
+
+				<div class="column">
+					<h3><i>t</i>, your new key</h3>
+					<center>
+						<div class="box"> 
+							{{results['t']}}
+						</div> 
+						<br>
+						<button onclick="copyText('{{ results['t'] }}')">Copy to clipboard</button>
+					</center>
+				</div>
+
+				<div class="column">
+					<h3><i>s</i>, the seed for your next new key</h3>
+					<center>
+						<div class="box"> 
+							{{results['s']}}
+						</div> 
+						<br>
+						<button onclick="copyText('{{ results['s'] }}')">Copy to clipboard</button>
+						<br />
+					</center>
+				</div>
+
+			</div>
+			
+		{% endif %}
+
+		<script>
+			function copyText(txt) {
+				// copy txt into clipboard 
+				// put txt in format '{{ TXT }}' if you want the value of the variable not a string literal
+				navigator.clipboard.writeText(txt);
+			}
+		</script>
 	</body>
 </html>

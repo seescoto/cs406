@@ -7,8 +7,27 @@
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
 	text-align: center;
+}
+
+.box {
+	width: 200px;
+	border: 1px solid var(--dgrey);
+}
+
+/* allow for columned stuff in 2 columns */
+.column {
+	float: center;
+	width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+	content: "";
+	display: table;
+	clear: both;
 }
 
 /* Style the navbar container */
@@ -63,4 +82,14 @@ h3 {
 	display: inline-block;
 	position: absolute;
 	top: 10px;
+}
+
+/* Change how drop-down details class (used for explanations) are displayed */
+details {
+	border: 1px solid var(--dgrey);
+	background-color: var(--llgrey);
+}
+details > *:not(summary) /*anything inside details EXCEPT summary */ {
+	padding-left: 30px; /* add a tab */
+	padding-right: 5px;
 }
