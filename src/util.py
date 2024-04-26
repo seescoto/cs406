@@ -4,7 +4,6 @@ import re  # regex
 
 def stringToIntArray(string):
     # make a string into an integer array - each element is the int representation of the character in that index
-
     # ord(character) transforms a char to the int that it represents in ascii
     return [ord(c) for c in string]
 
@@ -14,18 +13,20 @@ def intArrayToString(arr):
     return "".join([chr(i) for i in arr])
 
 
-def binaryStringToIntArray(binString):
-    # given a string of 0's and 1's (as characters)
-    # convert it to an int array where each 'byte' becomes an integer in the array
-
+def splitBinaryString(binString):
     if (re.findall(r'\s+', binString)):
         # if contains whitespace, split by whitespace
         binString = binString.split()
     else:
         # else split so each binByte has 8 chars in it
         binString = [binString[i:i+8] for i in range(0, len(binString), 8)]
+    return binString
 
-    return [int(binByte, 2) for binByte in binString]
+
+def binaryStringToIntArray(binString):
+    # given a string of 0's and 1's (as characters)
+    # convert it to an int array where each 'byte' becomes an integer in the array
+    return [int(binByte, 2) for binByte in splitBinaryString(binString)]
 
 
 def intArrayToBinaryString(arr):
@@ -36,18 +37,13 @@ def intArrayToBinaryString(arr):
 
 
 def binaryStringToString(binString):
-    #given a binary string, return it as a string w/ bytes converted to chars
-    
-    if (re.findall(r'\s+', binString)):
-        # if contains whitespace, split by whitespace
-        binString = binString.split()
-    else:
-        # else split so each binByte has 8 chars in it
-        binString = [binString[i:i+8] for i in range(0, len(binString), 8)]
-        
-    charArray = [chr(int(i, 2)) for i in binString]
-    
-    return "".join(charArray)
+    # given a binary string, return it as a string w/ bytes converted to chars
+    return intArrayToString(binaryStringToIntArray(binString))
+
+
+def stringToBinaryString(string):
+    # given a string of chars, return a binary string
+    return intArrayToBinaryString(stringToIntArray(string))
 
 
 def matchLength(string, length):
@@ -72,6 +68,22 @@ def elongate(string, length):
     newString += string[0:numAddedLetters]
 
     return newString
+
+
+def convert(plaintext, key, binaryPT, binaryKey):
+    # converts plaintext and key into int arrays (inputs are either strings or binary strings)
+    # convert plaintext - depends on format of plaintext
+    if binaryPT:
+        intPlain = binaryStringToIntArray(plaintext)
+    else:
+        intPlain = stringToIntArray(plaintext)
+    # convert key - depends on format
+    if binaryKey:
+        intKey = binaryStringToIntArray(key)
+    else:
+        intKey = stringToIntArray(key)
+
+    return (intPlain, intKey)
 
 
 def PRG(seedArr):

@@ -1,7 +1,7 @@
 # use this if running via flask otherwise get 'no module named util' error
 from . import util
 
-# import util #use this if running schemes.py via terminal
+# import util  # use this if running schemes.py via terminal
 
 
 def XOR(arr1, arr2):
@@ -12,27 +12,57 @@ def XOR(arr1, arr2):
     return [arr1[i] ^ arr2[i] for i in range(len(arr1))]
 
 
-def OTP(plaintext, key, binary=False):
+def OTP(plaintext, key, binaryPT=False, binaryKey=False):
     # takes a key and a plaintext and XORS them to create the encrypted ciphertext
-    # binary is a bool variable that says if the plaintext is in binary format or in text
+    # binaryPT and binaryKey are bool variables that says if the plaintext/key is in binary format or a reg string
 
     # if no key given, return none
     if not key:
         return None
 
     # transform plaintext and key into integers so can be XORed
-    # convert plaintext - depends on format of plaintext
-    if binary:
-        intPlain = util.binaryStringToIntArray(plaintext)
-    else:
-        intPlain = util.stringToIntArray(plaintext)
-    intKey = util.stringToIntArray(util.matchLength(key, len(intPlain)))
+    intPlain, intKey = util.convert(plaintext, key, binaryPT, binaryKey)
+    # match length key to plaintext
+    intKey = util.matchLength(intKey, len(intPlain))
 
     intCipher = XOR(intPlain, intKey)
-
     # return binary string of ciphertext
     return util.intArrayToBinaryString(intCipher)
 
 
 def ratchet(plaintext, key, binary=False):
     return True
+
+
+# binary key, string plaintext
+'''
+binKey = util.stringToBinaryString("hey")
+plain = "hello my name is sofia"
+cipher = OTP(plain, binKey, binaryKey=True)
+print(util.binaryStringToString(OTP(cipher, binKey, binaryPT=True, binaryKey=True)))
+'''
+
+# string key, string plaintext
+'''
+k = 'hey'
+plain = 'hello my name is sofia'
+cipher = OTP(plain, k)
+print(util.binaryStringToString(OTP(cipher, k, binaryPT=True)))
+'''
+
+# string key, binary plaintext
+"""
+k = 'hey'
+binPlain = util.stringToBinaryString("hello my name is sofia")
+cipher = OTP(binPlain, k, binaryPT=True)
+print(util.binaryStringToString(OTP(cipher, k, binaryPT=True, binaryKey=False)))
+"""
+
+
+# binary key, binary plaintext
+'''
+binKey = util.stringToBinaryString("hey")
+binPlain = util.stringToBinaryString("hello my name is sofia")
+cipher = OTP(binPlain, binKey, binaryPT=True, binaryKey=True)
+print(util.binaryStringToString(OTP(cipher, binKey, binaryPT=True, binaryKey=True)))
+'''

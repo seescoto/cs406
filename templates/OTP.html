@@ -20,7 +20,11 @@
 			</label>
 			<br />
 			<input type="text" id="key" name="key"/>
-			<br><br>
+			<br />
+
+			<input type="checkbox" id="binaryKey" name="binaryKey" value=True>
+  			<label for="binaryKey"> My message is in binary format </label><br>
+			<br>
 
 			<label for="input_text">
 				Enter the message you'd like to encrypt/decrypt:
@@ -29,8 +33,8 @@
 			<textarea id="input_text" name="input_text" rows="5" cols="50"></textarea>
 			<br />
 
-			<input type="checkbox" id="binary" name="binary" value=True>
-  			<label for="binary"> My message is in binary format </label><br>
+			<input type="checkbox" id="binaryPT" name="binaryPT" value=True>
+  			<label for="binaryPT"> My message is in binary format </label><br>
 
 			</br>
 
@@ -39,18 +43,37 @@
 
 		{% if encryption %}
 			<h2>Your encrypted ciphertext</h2>
+
 			<p> 
 				Note: not all ASCII values are printable using text, so if you're encrypting text, 
 				your ciphertext on the bottom (the text version) may look weird. The binary representation
 				on the top is what you should copy and paste if you'd like to decrypt it.
 			</p>
+
 			<textarea label="ciphertextBinary" rows="5" cols="50">
 				{{encryption['ciphertextBinary']}}
 			</textarea>
+			<br>
+			<button onclick="copyText('{{ encryption['ciphertextBinary'] }}')">Copy to clipboard</button>
+    		<br />
+
 			<p> = </p>
+
 			<textarea label="ciphertextReg" rows="5" cols="50">
 				{{encryption['ciphertextReg']}}
 			</textarea>
+			<br>
+			<button onclick="copyText('{{ encryption['ciphertextReg'] }}')">Copy to clipboard</button>
+    		<br />
+
+
+			<script>
+				function copyText(txt) {
+					// copy txt into clipboard 
+					// put txt in format '{{ TXT }}' if you want the value of the variable not a string literal
+					navigator.clipboard.writeText(txt);
+				}
+			</script>
 
 		{% endif %}
 

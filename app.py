@@ -49,14 +49,23 @@ def OTP():
 @app.route('/OTP-encrypt', methods=['POST'])
 def OTPEncrypt():
 
+    # get plaintext & key and store if either is in binary format
     plaintext = request.form.get('input_text')
     key = request.form.get('key')
-    binary = request.form.get('binary')
-    ciphertextBinary = schemes.OTP(plaintext, key, binary)
-    ciphertextReg = util.binaryStringToString(ciphertextBinary)
-    # save all data in a dict to keep and display
-    encryption = {"plaintext": plaintext, "key": key,
-                  "ciphertextBinary": ciphertextBinary, "ciphertextReg": ciphertextReg}
+    binaryPT = request.form.get('binaryPT')
+    binaryKey = request.form.get('binaryKey')
+    encryption = {}
+
+    # only call funciton if actual values
+    if (plaintext and key):
+        # find ciphertext w/ OTP() and convert to reg string
+        ciphertextBinary = schemes.OTP(
+            plaintext, key, binaryPT=binaryPT, binaryKey=binaryKey)
+        ciphertextReg = util.binaryStringToString(ciphertextBinary)
+
+        # save all data in a dict to keep and display
+        encryption = {"plaintext": plaintext, "key": key,
+                      "ciphertextBinary": ciphertextBinary, "ciphertextReg": ciphertextReg}
 
     return render_template('OTP.html', topbar=topbar, encryption=encryption)
 
