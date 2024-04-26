@@ -86,6 +86,14 @@ def convert(plaintext, key, binaryPT, binaryKey):
     return (intPlain, intKey)
 
 
+def toIntArray(unknown):
+    # convert unknown string (may be character, may be binary) to int array
+    if (re.findall(r'[^10 ]', unknown)):
+        # if any chars in string that aren't 1, 0, or space, then is a reg char string
+        return stringToIntArray(unknown)
+    return binaryStringToIntArray(unknown)
+
+
 def PRG(seedArr):
     # length doubling psuedo-random generator
     # takes an int arr of length n and returns a psuedorandom int arr of length 2n

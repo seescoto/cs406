@@ -11,5 +11,51 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>Symmetric Ratchet</h1>
+		<h2>Generate new keys!</h2>
+
+		<details class="why">
+			<summary>Why would I want to generate new keys?</summary>
+			<p>
+				We know that with a key that only you and one other person know, you
+				can encrypt secret messages so that even if you're 'overheard' by an
+				eavesdropper, the person spying on you will have no idea what you're
+				saying. This sounds pretty foolproof, so why do the extra work of
+				generating new keys?
+			</p>
+			<p>
+				Well, it's generally not good practice to use the same key for more
+				than one encryption/decryption. After all, what if your eavesdropper
+				somehow learns your key? Then they'll be able to decipher all of
+				your messages - past, present, and future - but you and your partner
+				will still think your messages are secret! That's not very secure.
+			</p>
+			<p>
+				A good solution to this is to generate a new key every time you want
+				to send a message. It'd be pretty difficult to coordinate with your
+				partner if you had to think up a new key every time you sent a
+				message, and you'd have the added threat of your key being
+				overheard. So how can we come up with new keys in a way that's easy
+				to do and won't risk someone eavesdropping and finding out our new
+				key?
+			</p>
+			<p>
+				Now presenting: the symmetric ratchet! It takes in your original key
+				as a seed and generates two new strings, <i>t</i> and <i>s</i>,
+				where <i>t</i> will be your new key, and <i>s</i> is the seed that
+				will get the <i>next</i> new key. The function is deterministic,
+				meaning that the same input will always result in the same output,
+				so you and your partner will have an endless supply of new keys that
+				are guaranteed to match.
+			</p>
+
+			<p>
+				A symmetric ratchet is an excellent way to come up with new keys,
+				and has the added benefit of <i>forward secrecy</i>. That means that
+				even if an eavesdropper learns one of your new keys (and therefore
+				knows how to compute all of your future keys) they have no idea what
+				your past keys were, and therefore have no way of figuring out what
+				your past messages said.
+			</p>
+		</details>
 	</body>
 </html>

@@ -30,8 +30,22 @@ def OTP(plaintext, key, binaryPT=False, binaryKey=False):
     return util.intArrayToBinaryString(intCipher)
 
 
-def ratchet(plaintext, key, binary=False):
-    return True
+def ratchet(key, loops=1, binary=False):
+    # convert key to int array
+    if binary:
+        s = util.binaryStringToIntArray(key)
+    else:
+        s = util.stringToIntArray(key)
+    halfway = len(s)  # index to split s and t
+
+    # double length of int array w/ prg, then split into s_i and t_i
+    # t_i is new key, s_i generates next key
+    for _ in range(loops):
+        total = util.PRG(s)
+        s = total[0:halfway]
+        t = total[halfway:]
+
+    return (s, t)
 
 
 # binary key, string plaintext
