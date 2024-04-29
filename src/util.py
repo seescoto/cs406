@@ -106,7 +106,7 @@ def PRG(seedArr):
     coeff1 = sum(seedArr[0:halfLength])
     coeff2 = sum(seedArr[halfLength:])
     # add a number after multiplying so not all odd/even elements are divisible by a given coefficient
-    added = seedArr[halfLength]
+    added = seedArr[halfLength] + seedArr[0] + length
 
     # given two deterministically found coefficients, multiply each int in the arr by a coefficient
     # and add another value to it before modding 256 (so it's still ascii) and combine into new array

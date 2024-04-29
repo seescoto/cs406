@@ -57,10 +57,10 @@ if __name__ == '__main__':
 """
 results = 
 
-mean of PRG generated array:                    127.52592759999985
-mean of randomly generated array:               127.53594820000045
-avg. range of PRG generated array:              250.20755999999923
-avg. range of randomly generated array:         250.85752000000087
+mean of PRG generated array:                    127.49305480000005
+mean of randomly generated array:               127.52766200000012
+avg. range of PRG generated array:              250.12756000000022
+avg. range of randomly generated array:         250.86564000000027
 
 Summary results are very similar for both randomly generated array using random package (tested PRG) and 
 my own prg (non-tested) and look indistinuishable (though range of randomly generated is slightly higher). 

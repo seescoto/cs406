@@ -112,7 +112,7 @@
 							{{results['t']}}
 						</div> 
 						<br>
-						<button onclick="copyText('{{ results['t'] }}')">Copy to clipboard</button>
+						<button onclick="copyText(`{{ results['t'] }}`)">Copy to clipboard</button>
 					</center>
 				</div>
 
@@ -123,7 +123,7 @@
 							{{results['s']}}
 						</div> 
 						<br>
-						<button onclick="copyText('{{ results['s'] }}')">Copy to clipboard</button>
+						<button onclick="copyText(`{{ results['s'] }}`)">Copy to clipboard</button> 
 						<br />
 					</center>
 				</div>
@@ -135,9 +135,60 @@
 		<script>
 			function copyText(txt) {
 				// copy txt into clipboard 
-				// put txt in format '{{ TXT }}' if you want the value of the variable not a string literal
+				// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
 				navigator.clipboard.writeText(txt);
 			}
 		</script>
+
+		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click for a beginner's explanation of symmetric ratchet</summary>
+				<p>
+					Symmetric ratchet relies on a function called a PRG, a pseudo-random generator. What that means 
+					is that the function takes in a string or number and outputs something "random", or at least 
+					something that looks random to someone who doesn't know the input. A length-doubling PRG, which 
+					is what the symmetric ratchet uses, does exactly what it sounds like - it takes in an input with a 
+					given length, say length <i>n</i>, and outputs something "random" looking with length <i>2n</i>. 
+				</p>
+				<p>
+					This new output with double the length of our input is what we use. The first half of the output, 
+					<i>t</i>, is what we use as our new key. You might think that we could also use it as an input for 
+					our next <i>t</i>, but remember that the output of a PRG only looks random if you don't know the 
+					input! If we used <i>t</i> as our key and our input to generate our next key, the outputs wouldn't 
+					look "random" enough and it would be much easier to crack our encryption. The second half of the output, 
+					<i>s</i>, is what we use the generate our next key.
+				</p>
+				<p>
+					The great (and necessary) thing about PRGs is that they're <b>deterministic</b>, meaning that the 
+					same input will always get you the same output. This means that as long as you and your partner both 
+					start out with the same original key (or seed), your updated keys will always match up.
+				</p>
+		</details>
+		<br>
+		<details class="advanced-explanation">
+			<summary>Click for a more advanced explanation of symmetric ratchet</summary>
+				<p>
+					Given a secure length-doubling pseudo-random generator (PRG), <i>G</i>, and a starting key, <i>k</i>,
+					you and your partner can generate as many updated keys as you'd like, and be confident that you both 
+					have the same information.
+				</p>
+				<p>
+					If <i>G</i> takes in <i>n</i> bits and then outputs <i>2n</i> psuedo-random bits, we can use the first 
+					<i>n</i> bits as our updated key and the last <i>n</i> bits as our seed for <i>G</i> to generate
+					the next updated key. A helpful diagram from chapter 5 of Mike Rosulek's 
+					<a href="https://joyofcryptography.com/">The Joy of Cryptography</a> is shown below.
+				</p>
+				<img src="../static/images/symmetric_ratchet.png" alt="Diagram of a symmetric ratchet scheme">
+				<p>
+					Using the above diagram as a visual aid, we can convince ourself that that starting from 
+					<i>k = s<sub>0</sub></i> and iterating through the PRG twice to get <i>t<sub>2</sub></i> is functionally
+					the same as starting with <i>s<sub>1</sub></i> and iterating throug the PRG once. This is why we don't 
+					need to save any past seeds, including the original key that you and your partner came up with.
+				</p>
+		</details>
+
+		<br><br>
+
 	</body>
 </html>

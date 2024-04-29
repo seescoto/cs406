@@ -90,3 +90,19 @@ details > *:not(summary) /*anything inside details EXCEPT summary */ {
 	padding-left: 30px; /* add a tab */
 	padding-right: 5px;
 }
+
+/* Scale images so that they fit the page */
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+img {
+	padding: 0;
+	display: block;
+	margin: 0 auto; /* centered */
+	max-height: 90%;
+	max-width: 90%;
+}

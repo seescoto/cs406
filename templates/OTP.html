@@ -58,7 +58,8 @@
 							{{encryption['ciphertextBinary']}}
 						</div> 
 						<br>
-						<button onclick="copyText('{{ encryption['ciphertextBinary'] }}')">Copy to clipboard</button>
+						<!-- vscode-disable-next-line -->
+						<button onclick="copyText(`{{ encryption['ciphertextBinary'] }}`)">Copy to clipboard</button> 
 						<br />
 					</center>
 				</div>
@@ -70,7 +71,8 @@
 							{{encryption['ciphertextReg']}}
 						</div> 
 						<br>
-						<button onclick="copyText('{{ encryption['ciphertextReg'] }}')">Copy to clipboard</button>
+						<!-- vscode-disable-next-line -->
+						<button onclick="copyText(`{{ encryption['ciphertextReg'] }}`)">Copy to clipboard</button> 
 						<br />
 					</center>
 				</div>
@@ -79,7 +81,7 @@
 			<script>
 				function copyText(txt) {
 					// copy txt into clipboard 
-					// put txt in format '{{ TXT }}' if you want the value of the variable not a string literal
+					// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
 					navigator.clipboard.writeText(txt);
 				}
 			</script>
@@ -195,7 +197,7 @@
 			</p>
 		</details>
 
-
+		<br><br>
 
 	</body>
 </html>
