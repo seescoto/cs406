@@ -21,7 +21,8 @@ def OTP(plaintext, key, binaryPT=False, binaryKey=False):
         return None
 
     # transform plaintext and key into integers so can be XORed
-    intPlain, intKey = util.convert(plaintext, key, binaryPT, binaryKey)
+    intPlain = util.toIntArray(plaintext, binaryPT)
+    intKey = util.toIntArray(key, binaryKey)
     # match length key to plaintext
     intKey = util.matchLength(intKey, len(intPlain))
 
@@ -32,10 +33,7 @@ def OTP(plaintext, key, binaryPT=False, binaryKey=False):
 
 def ratchet(key, loops=1, binary=False):
     # convert key to int array
-    if binary:
-        s = util.binaryStringToIntArray(key)
-    else:
-        s = util.stringToIntArray(key)
+    s = util.toIntArray(key, binary)
     halfway = len(s)  # index to split s and t
 
     # double length of int array w/ prg, then split into s_i and t_i

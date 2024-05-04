@@ -69,30 +69,11 @@ def elongate(string, length):
 
     return newString
 
-
-def convert(plaintext, key, binaryPT, binaryKey):
-    # converts plaintext and key into int arrays (inputs are either strings or binary strings)
-    # convert plaintext - depends on format of plaintext
-    if binaryPT:
-        intPlain = binaryStringToIntArray(plaintext)
-    else:
-        intPlain = stringToIntArray(plaintext)
-    # convert key - depends on format
-    if binaryKey:
-        intKey = binaryStringToIntArray(key)
-    else:
-        intKey = stringToIntArray(key)
-
-    return (intPlain, intKey)
-
-
-def toIntArray(unknown):
-    # convert unknown string (may be character, may be binary) to int array
-    if (re.findall(r'[^10 ]', unknown)):
-        # if any chars in string that aren't 1, 0, or space, then is a reg char string
-        return stringToIntArray(unknown)
-    return binaryStringToIntArray(unknown)
-
+def toIntArray(string, binary):
+    #converts a string (binary or reg) to an int array 
+    if binary:
+        return binaryStringToIntArray(string) 
+    return stringToIntArray(string)
 
 def PRG(seedArr):
     # length doubling psuedo-random generator
@@ -103,10 +84,10 @@ def PRG(seedArr):
     # deterministic, uses same values for same input
     length = len(seedArr)
     halfLength = length//2
-    coeff1 = sum(seedArr[0:halfLength])
-    coeff2 = sum(seedArr[halfLength:])
+    coeff1 = sum(seedArr[0:halfLength]) - seedArr[0]
+    coeff2 = sum(seedArr[halfLength:]) + seedArr[-1]
     # add a number after multiplying so not all odd/even elements are divisible by a given coefficient
-    added = seedArr[halfLength] + seedArr[0] + length
+    added = seedArr[0] + seedArr[halfLength] + seedArr[-1]
 
     # given two deterministically found coefficients, multiply each int in the arr by a coefficient
     # and add another value to it before modding 256 (so it's still ascii) and combine into new array
@@ -114,10 +95,38 @@ def PRG(seedArr):
     # one in position k+1 will have been multiplied by coeff2
 
     newArr = [0] * 2 * length
-    for i in range(2*length):
-        if (i % 2 == 0):
-            newArr[i] = (coeff1 * (seedArr[i//2]) + added) % 256
-        else:
-            newArr[i] = (coeff2 * seedArr[i//2] + added) % 256
+    for i in range(length):
+        newArr[2*i] = (coeff1 * (seedArr[i]) + added + i**2) % 256
+        newArr[2*i + 1] = (coeff2 * (seedArr[i]) + added + (i+1)**2) % 256
 
     return newArr
+
+def PRF(k, x, binK = False, binX = False):
+    # psuedo-random function composed of PRGs 
+    # takes in two strings (binary or regular) k and x 
+    # k is the key of length n and x is the message of length m 
+    # traverses through a binary tree of height m and returns an int array v of length n
+    
+
+    # convert k to int array
+    kInt = toIntArray(k, binK)
+
+    # convert x to binary string
+    if not binX:
+        x = stringToBinaryString(x) 
+    x = x.replace(" ", "") # remove spaces
+
+    # traverse through binary tree of PRGS
+    v = kInt
+    half = len(v)
+    for chr in x: 
+        total = PRG(v)
+        # if next char in x is a 0 go left, if is 1 go right
+        if chr == "0":
+            v = total[:half]
+        else:
+            v = total[half:]
+
+    return v
+
+
