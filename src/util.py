@@ -75,6 +75,7 @@ def toIntArray(string, binary):
         return binaryStringToIntArray(string) 
     return stringToIntArray(string)
 
+# PRG - impossible to prove secure, but could possibly prove insecure
 def PRG(seedArr):
     # length doubling psuedo-random generator
     # takes an int arr of length n and returns a psuedorandom int arr of length 2n
@@ -101,11 +102,13 @@ def PRG(seedArr):
 
     return newArr
 
-def PRF(k, x, binK = False, binX = False):
-    # psuedo-random function composed of PRGs 
+# PRF built on PRG (secure if PRG is secure) - computationally intensive
+def PRF1(k, x, binK = False, binX = False):
+    # psuedo-random function composed of PRGs - secure if PRG is secure
     # takes in two strings (binary or regular) k and x 
     # k is the key of length n and x is the message of length m 
     # traverses through a binary tree of height m and returns an int array v of length n
+    # k times x -> v
     
 
     # convert k to int array
@@ -129,4 +132,25 @@ def PRF(k, x, binK = False, binX = False):
 
     return v
 
+# PRF - impossible to prove secure, but could possibly prove insecure
+def PRF(k, x, binK=False, binX=False):
+    # pseudo-random function
+    # k by x -> v (length of k)
+    
+    #convert k and x to int arrays
+    arrK = toIntArray(k, binK) 
+    arrX = toIntArray(x, binX)
 
+    #frequently re-used values 
+    sumX = sum(arrX)
+    sumK = sum(arrK)
+    lenX = len(arrX)
+    c = sumX + sumK + arrX[lenX//2] + arrK[len(arrK)//2]
+
+    v = [0] * len(arrK)
+    for i in range(len(v)):
+        add = arrK[-i] + arrX[-(i % lenX)] + i**2
+
+        v[i] = ((c + i)*arrK[i]  + add) % 256
+    
+    return v

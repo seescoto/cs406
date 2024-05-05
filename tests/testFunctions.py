@@ -29,3 +29,12 @@ def getRange(arr):
 def getAvg(arr):
     # returns avg of values in arr
     return (sum(arr)/len(arr))
+
+def countEvensOdds(arr):
+    #returns number of even and odd nums in arr
+    evens = 0 
+    for i in arr:
+        if i % 2 == 0: 
+            evens += 1 
+
+    return (evens, len(arr) - evens)
