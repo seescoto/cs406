@@ -4,14 +4,6 @@ from . import util
 # import util  # use this if running schemes.py via terminal
 
 
-def XOR(arr1, arr2):
-    # XOR two arrays of integers
-    if len(arr1) != len(arr2):
-        raise ValueError("Arrays are not the same length, can't be XORED")
-
-    return [arr1[i] ^ arr2[i] for i in range(len(arr1))]
-
-
 def OTP(plaintext, key, binaryPT=False, binaryKey=False):
     # takes a key and a plaintext and XORS them to create the encrypted ciphertext
     # binaryPT and binaryKey are bool variables that says if the plaintext/key is in binary format or a reg string
@@ -26,7 +18,7 @@ def OTP(plaintext, key, binaryPT=False, binaryKey=False):
     # match length key to plaintext
     intKey = util.matchLength(intKey, len(intPlain))
 
-    intCipher = XOR(intPlain, intKey)
+    intCipher = util.XOR(intPlain, intKey)
     # return binary string of ciphertext
     return util.intArrayToBinaryString(intCipher)
 

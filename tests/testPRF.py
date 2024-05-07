@@ -14,7 +14,7 @@ def test(tests, kLength, xLength):
     numOddsPRF = 0 
     for i in range(1, tests+1):
         # random array of length kLength
-        randArr = tf.genRandomIntArray(kLength)
+        randArr = tf.genRandomIntArray(xLength)
         e, o = tf.countEvensOdds(randArr)
         numEvensRand += e 
         numOddsRand += o
@@ -39,7 +39,7 @@ def test(tests, kLength, xLength):
     print(f"comparison of evens to odds in randomly generated array: \t {numEvensRand/tests:.3f}% : {numOddsRand/tests:.3f}%")
 
 if __name__ == '__main__':
-    test(50000, 100, 200)
+    test(50000, 50, 100)
 
 """
 results = 
