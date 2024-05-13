@@ -95,6 +95,35 @@ def CBC():
     return render_template('CBC.html', topbar=topbar)
 
 
+@app.route('/CBC-enc-dec', methods=['POST'])
+def CBCEncDec():
+    # get plaintext & key and store if either is in binary format
+    message = request.form.get('inputText')
+    key = request.form.get('key')
+    binaryMessage = request.form.get('binaryInput')
+    binaryKey = request.form.get('binaryKey')
+    encryption = {}
+
+    # only call function if has actual values
+    if (message and key):
+        # if encrypting
+        if request.form.get('submitButton') == "encrypt":
+            resultTextBinary = schemes.encryptCBC(
+                key, message, binK=binaryKey, binM=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+        # else are decrypting
+        else:
+            resultTextBinary = schemes.decryptCBC(
+                key, message, binK=binaryKey, binC=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+
+        # save all data in a dict to keep and display
+        encryption = {"message": message, "key": key,
+                      "resultTextBinary": resultTextBinary, "resultTextReg": resultTextReg}
+
+    return render_template('CBC.html', topbar=topbar, encryption=encryption)
+
+
 @app.route('/CTR')
 def CTR():
     return render_template('CTR.html', topbar=topbar)

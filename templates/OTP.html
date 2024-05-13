@@ -47,7 +47,7 @@
 			<p> 
 				Note: not all ASCII values are printable using text, so if you're encrypting text, 
 				your ciphertext on the right (the text version) may look weird. The binary representation
-				on the top is what you should copy and paste if you'd like to decrypt it.
+				on the left is what you should copy and paste if you'd like to decrypt it.
 			</p>
 
 			<div class="container">
@@ -58,7 +58,6 @@
 							{{encryption['ciphertextBinary']}}
 						</div> 
 						<br>
-						<!-- vscode-disable-next-line -->
 						<button onclick="copyText(`{{ encryption['ciphertextBinary'] }}`)">Copy to clipboard</button> 
 						<br />
 					</center>
@@ -71,7 +70,6 @@
 							{{encryption['ciphertextReg']}}
 						</div> 
 						<br>
-						<!-- vscode-disable-next-line -->
 						<button onclick="copyText(`{{ encryption['ciphertextReg'] }}`)">Copy to clipboard</button> 
 						<br />
 					</center>
@@ -110,7 +108,7 @@
 					original message.
 				</p>
 				<p>
-					Example: 
+					(Simplified) example: 
 					
 					<ul>
 						<li>

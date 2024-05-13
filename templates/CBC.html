@@ -11,5 +11,193 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>CBC Block Cipher</h1>
+
+		<form action="/CBC-enc-dec" method="post">
+			<br />
+			<label for="key">
+				Enter your key. This should be a word or phrase that's easy to
+				remember for both you and the person you want to send encrypted
+				messages with.
+			</label>
+			<br />
+			<textarea id="key" name="key" rows="1" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryKey" name="binaryKey" value=True>
+			<label for="binaryKey"> My message is in binary format </label><br>
+			<br>
+
+			<label for="input_text">
+				Enter the message you'd like to encrypt/decrypt:
+			</label>
+			<br />
+			<textarea id="inputText" name="inputText" rows="5" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryInput" name="binaryInput" value=True>
+  			<label for="binaryInput"> My message is in binary format </label><br>
+
+			</br>
+
+			<input type="submit" name="submitButton" value="encrypt" />
+			<input type="submit" name="submitButton" value="decrypt" />
+
+		</form>
+
+		{% if encryption %}
+			<h2>Your encrypted/decrypted text</h2>
+
+			<p> 
+				Note: not all ASCII values are printable using text, so if you're encrypting text, 
+				your ciphertext on the right (the text version) may look weird. The binary representation
+				on the left is what you should copy and paste if you'd like to decrypt it.
+			</p>
+
+			<div class="container">
+				<div class="column">
+					<center>
+						<h3>Binary</h3>
+						<div class="box"> 
+							{{encryption['resultTextBinary']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextBinary'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+
+				<div class="column">
+					<center>
+						<h3>Text</h3>
+						<div class="box"> 
+							{{encryption['resultTextReg']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextReg'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+			</div>
+
+			<script>
+				function copyText(txt) {
+					// copy txt into clipboard 
+					// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
+					navigator.clipboard.writeText(txt);
+				}
+			</script>
+
+		{% endif %}
+
+		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click for a beginner's explanation on how CBC block cipher works</summary>
+				<p>
+					A block cipher is a way of encrypting or decrypting data by splitting up your message into blocks 
+					(hence the name). With each block, it uses something called an <b>invertible function</b>. An invertible
+					function is exactly what it sounds like - a function that can be inverted to get back what you started with.
+				</p>
+				<p>
+					A simple example of an invertible function is one that just reverses the order of your letters. So if your 
+					original text is "abcd", after putting it into a function <i>f</i>, you'll get "dcba". We know that it's 
+					invertible because if you put it in the inverse function, <i>f<sup>-1</sup></i>, and reverse the letters 
+					again, you'll get "abcd", which is exactly what you started with. (In this case, <i>f</i> and 
+					<i>f<sup>-1</sup></i> are the same function, meaning you follow the same directions to use both, but that 
+					isn't always the case.)
+				</p>
+				<p>
+					Now that we know what an invertible function is, we can conceptualize what CBC block cipher does. We split 
+					our message up into blocks of a specific length, and input each block (along with the key) into our invertible 
+					function. To make sure that it isn't too easy to guess our original message from the encrypted result, we'll 
+					change each block by some predictable amount called the <b>initialization vector (IV)</b>first (a random block of numbers that we choose at the beginning.) This is 
+					sort of like adding the new block to our original message's block and then putting it into the function.
+				</p>
+				<p>
+					Now that all of the blocks have been changed by the function, we can stick them all together along with the IV
+					 and return them as our encrypted ciphertext.
+				</p>
+				<p>
+					Getting our original message back from the ciphertext is as simple as splitting the ciphertext up into blocks 
+					and inserting them into the inverse function and then un-changing the result by the IV we used before. (This 
+					is like subtracting the IV that we added before). And ta-da, we have our original message!
+				</p>
+				<p>
+					(Simplified) example:
+				</p>
+					<ul>
+						<li>
+							Let our function be <i>f</i>, which reverses the order of anything we give it. (Ex. <i>f</i>("123") = "321".) 
+							Our inverse function is <i>f<sup>-1</sup></i>, which also reverses the order of anything we give it. 
+							(Ex. <i>f<sup>-1</sup></i>("321") = "123")
+						</li>
+						<li>
+							Let's say that our original message is "hello!". We first split that up into a few different blocks 
+							of length two, so "hello!" becomes "he", "ll", and "o!". 
+						</li>
+						<li>
+							Now we'll come up with an IV that we can add. Let's say that our IV is "01", so that adding 
+							"01" to any block makes the first letter go forward one. (Ex. "aa" + "01" = "ba". If we have our first 
+							letter as "z", it'll loop back up to "a", so "zz" + "01" = "az"). We add our IV to the blocks 
+							of our message and get the new blocks "ie", "ml", and "p!".
+						</li>
+						<li>
+							Now comes the fun part - putting our blocks into our function, <i>f</i>. After that, our blocks will be 
+							"ei", "lm", and "!p". 
+						</li>
+						<li>
+							We combine our blocks (along with the IV that we used to generate them) to get "01eilm!p", which 
+							is our ciphertext. It looks like nonsense to anyone who doesn't know our function and its inverse!
+						</li>
+						<li>
+							To turn our ciphertext back into our original message, we can take it and split it into the blocks "01", "ei", 
+							"lm" and "!p". We now put all of them except the first (which is our IV) into the inverse function 
+							and get the blocks "ie", "ml", and "p!". 
+						</li>
+						<li>
+							Because the first block is our IV, this tells us that we added "01" to the blocks before. To reverse that 
+							all we have to do is subtract "01" from the blocks. (Ex. "ba" - "01" = "aa". If we're at "a", we loop back to "z",
+							so "az" - "01" = "zz").
+						</li>
+						<li>
+							After subtracting, our blocks are "he", "ll", and "o!". We combine them back and get our original message - "hello!".
+						</li>
+					</ul>
+				</p>
+		</details>
+
+		<br>
+
+		<details class="advanced-explanation">
+			<summary>Click for a more advanced explanation of CBC block cipher</summary>
+			<p>
+				A helpful diagram from chapter 8 of Mike Rosulek's 
+				<a href="https://joyofcryptography.com/">The Joy of Cryptography</a> is shown below.
+			</p>
+			<img src="../static/images/CBC.png" alt="Diagram of a CBC block cipher">
+			<p>
+				The idea of a CBC block cipher is very similar to what was shown in the beginner's explanation. We have our 
+				IV,<i>c<sub>0</sub></i>, that was chosen from a random assortment of blocks, and we XOR<b><sup>*</sup></b> it with the first block of 
+				our message, <i>m<sub>1</sub></i>. Then we put it into our invertible function called a pseudo-random permutation (PRP)
+				along with our key to generate the next block of the ciphertext, <i>c<sub>1</sub></i>.
+			</p>
+			<p> 
+				We just follow that general pattern. XOR the <i>ith</i> block of the message with the <i>(i-1)th</i> block of the ciphertext,
+				that is, the one that we just generated. Then put it into the PRP, <i>f</i> with our key. At the end we combine all 
+				the blocks of the ciphertext together.
+			</p>
+			<p>
+				To get our original message back, we follow the same general format of using our inverse PRP, <i>f<sup>-1</sup></i>
+				with the key and the <i>ith</i> block of the ciphertext. Then we XOR that with the <i>(i-1)th</i> ciphertext block, 
+				that is the block immediately before it, to get the corresponding message block. Combine them all and we get our original 
+				message back!
+			</p>
+			<p></p>
+			<p>
+				<b><sup>*</sup></b> A detailed explanation of the operation XOR can be found under the advanced explanation on the 
+				one time pad page, <a href="/OTP">here.</a></p>
+		</details>
+
+		<br><br>
 	</body>
 </html>
