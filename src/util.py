@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 # utility functions
 import re  # regex
 
@@ -39,6 +38,15 @@ def binaryStringToIntArray(binString):
 
 
 def intArrayToBinaryString(arr):
+    """
+    convert int array to binary string
+
+    Args:
+        arr (int array)
+
+    Returns:
+        str: binary string representing each int in arr as a byte
+    """
     # given an int array, convert each int into binary and then return a string of all bytes separated by spaces
     strArr = [bin(i)[2:].zfill(8) for i in arr]
     # zfill 8 so it keeps leading zeros, [2:] so it doesnt put '0b' prefix into string
@@ -46,11 +54,28 @@ def intArrayToBinaryString(arr):
 
 
 def binaryStringToString(binString):
-    # given a binary string, return it as a string w/ bytes converted to chars
+    """
+    given a string of bytes, return its character equivalent 
+
+    Args:
+        binString (str): binary string
+
+    Returns:
+        str: character string w/ bytes converted to chars
+    """
     return intArrayToString(binaryStringToIntArray(binString))
 
 
 def stringToBinaryString(string):
+    """
+    given a string of characters, return its binary equivalent 
+
+    Args:
+        string (str): character string
+
+    Returns:
+        str: binary string w/ chars converted to bytes
+    """
     # given a string of chars, return a binary string
     return intArrayToBinaryString(stringToIntArray(string))
 
@@ -98,6 +123,24 @@ def elongate(string, length):
     return newString
 
 
+def addToNoRemainder(intArr, toAdd, length):
+    """
+    adds int toAdd to end of intArr until len(intArr) divides length w/ no remainder
+
+    Args:
+        intArr (int array): int array to elongate
+        toAdd (int): int to add to the end of intArr
+        length (int): number that the end length of intArr should divide (not zero)
+
+    Returns:
+        int arr: that contains all of intArr and as many additional ints "toAdd" to make it 
+        so that it divides evenly into blocks of len length
+    """
+    num = length - (len(intArr) % length)
+
+    return (intArr + [toAdd] * num)
+
+
 def toIntArray(string, binary):
     """
     converts a string (binary or character) into an int array
@@ -141,6 +184,46 @@ def stringSplit(string, n, binary=False):
     string = [string[i*chunk: (i+1)*chunk] for i in range(n)]
 
     return string
+
+
+def removeEnding(arr, val):
+    """returns arr that does not end with val (removes instances of val at the end)
+
+    Args:
+        arr (int array)
+        val (int): int to remove at the end of arr
+
+    Returns:
+        int array that doesn't end with val 
+    """
+
+    i = len(arr)
+    while (i - 1) >= 0 and (arr[i-1] == val):
+        i -= 1
+
+    return arr[:i]
+
+
+def unpack(arr):
+    """unpacks nested list/array
+
+    Args:
+        arr (array): nested array
+
+    Returns:
+        array: array with all elements in it not nested
+    """
+    return unpackRecurse(arr, [])
+
+
+def unpackRecurse(nested, all):
+    for sub in nested:
+        if isinstance(sub, list):
+            all = unpackRecurse(sub, all)
+        else:
+            all += [sub]
+
+    return all
 
 
 def PRG(seedArr):
@@ -215,110 +298,100 @@ def altPRF(k, x, binK=False, binX=False):
     return v
 
 
-def PRF(k, x, binK=False, binX=False):
+def PRF(k, x):
     """
     pseudo-random function 
     impossible to prove secure without proving P=NP, can possibly prove insecure
 
     Args:
-        k (_type_): string (binary or character) 
-        x (_type_): string (binary or character) of length n
-        binK (bool, optional): true if k is a binary string. Defaults to False.
-        binX (bool, optional): true if x is a binary string. Defaults to False.
+        k (int array): key as int array
+        x (int array): int array of length n
 
     Returns:
         int array: pseduo-random int array of length n
     """
     # pseudo-random function
     # k by x -> v (length of x)
-    # k, x are strings (binary or regular)
-    # v is an int array
-
-    # convert k and x to int arrays
-    arrK = toIntArray(k, binK)
-    arrX = toIntArray(x, binX)
+    # k, x, v are int arrays
 
     # frequently re-used values
-    sumX = sum(arrX)
-    sumK = sum(arrK)
-    lenK = len(arrK)
-    c = sumX + sumK + arrX[len(arrX)//2] + arrK[lenK//2]
+    sumX = sum(x)
+    sumK = sum(k)
+    lenK = len(k)
+    c = sumX + sumK + x[len(x)//2] + k[lenK//2]
 
-    v = [0] * len(arrX)
+    v = [0] * len(x)
     for i in range(len(v)):
-        add = arrK[-(i % lenK)] + arrX[-i] + i**2
+        add = k[-(i % lenK)] + x[-i] + i**2
 
-        v[i] = ((c + i)*arrX[i] + add) % 256
+        v[i] = ((c + i)*k[i % lenK] + add) % 256
 
     return v
 
 
-def PRP(k, v, binK=False, binV=False):
+def PRP(k, v):
     """
     4-round fiestel cipher PRP (invertible PRF)
     based on PRF - secure if PRF is secure
 
     Args:
-        k (string): string (binary or character) of key
-        v (string): string (binary or regular) of plaintext - length n 
-        binK (bool, optional): true if k is a binary string. Defaults to False.
-        binV (bool, optional): true if v is a binary string. Defaults to False.
+        k (int array): key int array
+        v (int array): plaintext int array of length n 
 
     Returns:
-        string: string (of same type as v) that represents ciphertext - length n 
+        int array that represents ciphertext - length n 
     """
     # split k into 4, v into 2
-    k = stringSplit(k, 4, binK)
-    v = stringSplit(v, 2, binV)
+    k = stringSplit(k, 4)
+    v = stringSplit(v, 2)
 
-    # convert v substrings to int arrays
-    v = [toIntArray(substr, binV) for substr in v]
+    # convert v substrings to int arrays if not already
+    # v = [toIntArray(substr, binV) for substr in v]
 
     # fiestel rounds
     for i in range(4):
-        newV = XOR(PRF(k[i], intArrayToString(v[1])), v[0])
+        newV = XOR(PRF(k[i], v[1]), v[0])
         v[0] = v[1]
         v[1] = newV
 
-    if binV:
+    '''if binV:
         v = [intArrayToBinaryString(i) for i in v]
         v[0] += " "  # add a space between bytes
     else:
-        v = [intArrayToString(i) for i in v]
+        v = [intArrayToString(i) for i in v]'''
 
     return v[0] + v[1]
 
 
-def PRPinv(k, v, binK=False, binV=False):
+def PRPinv(k, v):
     """
     4-round inverse fiestel cipher PRP (invertible PRF)
 
     Args:
-        k (string): string (binary or character) of key
-        v (string): string (binary or regular) of ciphertext.
-        binK (bool, optional): true if k is a binary string. Defaults to False.
-        binV (bool, optional): true if v is a binary string. Defaults to False.
+        k (int array): int array of key
+        v (int array): int array of ciphertext (length n)
 
     Returns:
-        string: string (of same type as v) that represents plaintext
+        int array of length n that represents plaintext
     """
     # split k into 4, v into 2
-    k = stringSplit(k, 4, binK)
-    v = stringSplit(v, 2, binV)
+    k = stringSplit(k, 4)
+    v = stringSplit(v, 2)
 
     # convert v substrings to int arrays
-    v = [toIntArray(substr, binV) for substr in v]
+    # v = [toIntArray(substr, binV) for substr in v]
 
     # fiestel rounds
     for i in range(3, -1, -1):
-        newV = XOR(PRF(k[i], intArrayToString(v[0])), v[1])
+        # newV = XOR(PRF(k[i], intArrayToString(v[0])), v[1])
+        newV = XOR(PRF(k[i], v[0]), v[1])
         v[1] = v[0]
         v[0] = newV
 
-    if binV:
+    '''if binV:
         v = [intArrayToBinaryString(i) for i in v]
         v[0] += " "  # add a space between bytes
     else:
-        v = [intArrayToString(i) for i in v]
+        v = [intArrayToString(i) for i in v]'''
 
     return v[0] + v[1]

@@ -1,5 +1,6 @@
 # use this if running via flask otherwise get 'no module named util' error
 from . import util
+import random
 
 # import util  # use this if running schemes.py via terminal
 
@@ -36,3 +37,78 @@ def ratchet(key, loops=1, binary=False):
         t = total[halfway:]
 
     return (s, t)
+
+
+blen = 4
+
+
+def encryptCBC(k, m, binK=False, binM=False):
+    """CBC block chaining
+
+    Args:
+        k (string): string (char or binary) that represents the key
+        m (string): string (char or binary) that represents the plaintext message
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binM (bool, optional): true if m is a binary string. Defaults to False.
+
+    Returns:
+        encrypted message c as a binary string 
+    """
+    m = util.toIntArray(m, binM)
+    k = util.toIntArray(k, binK)
+
+    # split m into into n blocks of length blen
+    # if m has indivisible length to blen, add spaces to the end
+    m = util.addToNoRemainder(m, ord(" "), blen)
+    blocks = len(m)//blen
+    m = util.stringSplit(m, blocks)
+
+    # encrypted ciphertext in blocks of length blen + 1 for initialization vector
+    c = [[0] * blen] * (blocks + 1)
+    c[0] = [random.randint(0, 256)
+            for _ in range(blen)]  # initialization vector
+
+    # each block c[i] is the resulf of F(k, m[i-1] XOR c[i-1])
+    for i in range(1, blocks + 1):
+        mc = util.XOR(m[i-1], c[i-1])
+        c[i] = util.PRP(k, mc)
+
+    # convert c into binary string
+    totalCString = [util.intArrayToBinaryString(b) for b in c]
+    totalCString = " ".join(totalCString)
+
+    return totalCString
+
+
+def decryptCBC(k, c, binK=False, binC=False):
+    """decrypts ciphertext c with key k
+
+    Args:
+        k (int array): key int array
+        c (int array): ciphertext int array
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binC (bool, optional): true if c is a binary string. Defaults to False.
+
+    Returns:
+        decrypted plaintext message m as binary string 
+    """
+    # convert to int arrays
+    c = util.toIntArray(c, binC)
+    k = util.toIntArray(k, binK)
+
+    # split c into blocks of length blen
+    blocks = len(c)//blen
+    c = util.stringSplit(c, blocks)
+
+    m = [[0] * blen] * (blocks - 1)
+    # each block m[i] is the result of F^{-1}(k, c[i+1]) XOR c[i]
+    for i in range(len(m)):
+        m[i] = util.PRPinv(k, c[i+1])
+        m[i] = util.XOR(m[i], c[i])
+
+    # unpack nested list and get rid of spaces added in encryption
+    m = util.unpack(m)
+    m = util.removeEnding(m, ord(" "))
+
+    # return m as binary string
+    return util.intArrayToBinaryString(m)
