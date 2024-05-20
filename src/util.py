@@ -1,4 +1,5 @@
 # utility functions
+from http.client import REQUEST_URI_TOO_LONG
 import re  # regex
 
 
@@ -35,6 +36,26 @@ def binaryStringToIntArray(binString):
     # given a string of 0's and 1's (as characters)
     # convert it to an int array where each 'byte' becomes an integer in the array
     return [int(binByte, 2) for binByte in splitBinaryString(binString)]
+
+
+def intToBinaryString(num):
+    # converts an integer into a binary string (separated by spaces)
+
+    # convert, remove '0b' prefix, add 0's to end so it divides 8
+    string = bin(num)[2:]  # get rid of '0b' prefix
+    remainder = len(string) % 8
+    if remainder != 0:
+        string = "0"*(8 - remainder) + string
+
+    # deliminate by spaces
+    binArr = splitBinaryString(string)
+    string = " ".join(binArr)
+
+    return string
+
+
+def binaryStringToInt(string):
+    return int(string.replace(" ", ""), 2)
 
 
 def intArrayToBinaryString(arr):
@@ -136,9 +157,11 @@ def addToNoRemainder(intArr, toAdd, length):
         int arr: that contains all of intArr and as many additional ints "toAdd" to make it 
         so that it divides evenly into blocks of len length
     """
-    num = length - (len(intArr) % length)
+    if (len(intArr) % length != 0):
+        num = length - (len(intArr) % length)
 
-    return (intArr + [toAdd] * num)
+        return (intArr + [toAdd] * num)
+    return intArr
 
 
 def toIntArray(string, binary):
@@ -177,7 +200,7 @@ def stringSplit(string, n, binary=False):
     # if not divisible by n, elongate so it is
     remainder = len(string) % n
     if remainder != 0:
-        string = elongate(string, len(string) + remainder)
+        string = elongate(string, len(string) + (n - remainder))
 
     # split up into n parts
     chunk = int(len(string)/n)
@@ -224,6 +247,49 @@ def unpackRecurse(nested, all):
             all += [sub]
 
     return all
+
+
+def addModular(arr, toAdd):
+    """adds 1 to int array as if it were a binary number (i.e. keeping each element in the array within the 
+    range [0, mod] utilizing modular addition). 
+
+    Args:
+        arr (int array)
+
+    Returns:
+        newArr (int array)
+    """
+    # convert to binary string then to number
+    binString = intArrayToBinaryString(arr)
+    binNum = binaryStringToInt(binString)
+    maxNum = 2**(len(arr) * 8)
+    binNum = (binNum + toAdd) % maxNum
+
+    # reconvert into int array
+    binNum = intToBinaryString(binNum)
+    newArr = binaryStringToIntArray(binNum)
+
+    # ensure new int array is same size as old one
+    if (len(newArr) < len(arr)):
+        addZeros = len(arr) - len(newArr)
+        newArr = [0] * addZeros + newArr
+
+    return newArr
+
+
+def prepareBC(txt, key, binTxt, binKey, blen):
+    # prepares text, key, and number of blocks for use in block cipher scheme
+
+    txt = toIntArray(txt, binTxt)
+    key = toIntArray(key, binKey)
+
+    # split txt into into n blocks of length blen
+    # if m has indivisible length to blen, add spaces to the end
+    txt = addToNoRemainder(txt, ord(" "), blen)
+    blocks = len(txt)//blen
+    txt = stringSplit(txt, blocks)
+
+    return (txt, key, blocks)
 
 
 def PRG(seedArr):
@@ -345,20 +411,11 @@ def PRP(k, v):
     k = stringSplit(k, 4)
     v = stringSplit(v, 2)
 
-    # convert v substrings to int arrays if not already
-    # v = [toIntArray(substr, binV) for substr in v]
-
     # fiestel rounds
     for i in range(4):
         newV = XOR(PRF(k[i], v[1]), v[0])
         v[0] = v[1]
         v[1] = newV
-
-    '''if binV:
-        v = [intArrayToBinaryString(i) for i in v]
-        v[0] += " "  # add a space between bytes
-    else:
-        v = [intArrayToString(i) for i in v]'''
 
     return v[0] + v[1]
 
@@ -378,20 +435,11 @@ def PRPinv(k, v):
     k = stringSplit(k, 4)
     v = stringSplit(v, 2)
 
-    # convert v substrings to int arrays
-    # v = [toIntArray(substr, binV) for substr in v]
-
     # fiestel rounds
     for i in range(3, -1, -1):
         # newV = XOR(PRF(k[i], intArrayToString(v[0])), v[1])
         newV = XOR(PRF(k[i], v[0]), v[1])
         v[1] = v[0]
         v[0] = newV
-
-    '''if binV:
-        v = [intArrayToBinaryString(i) for i in v]
-        v[0] += " "  # add a space between bytes
-    else:
-        v = [intArrayToString(i) for i in v]'''
 
     return v[0] + v[1]

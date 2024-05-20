@@ -4,6 +4,8 @@ import random
 
 # import util  # use this if running schemes.py via terminal
 
+blen = 4  # global variable for all block ciphers
+
 
 def OTP(plaintext, key, binaryPT=False, binaryKey=False):
     # takes a key and a plaintext and XORS them to create the encrypted ciphertext
@@ -39,9 +41,6 @@ def ratchet(key, loops=1, binary=False):
     return (s, t)
 
 
-blen = 4
-
-
 def encryptCBC(k, m, binK=False, binM=False):
     """CBC block chaining
 
@@ -54,14 +53,8 @@ def encryptCBC(k, m, binK=False, binM=False):
     Returns:
         encrypted message c as a binary string 
     """
-    m = util.toIntArray(m, binM)
-    k = util.toIntArray(k, binK)
-
-    # split m into into n blocks of length blen
-    # if m has indivisible length to blen, add spaces to the end
-    m = util.addToNoRemainder(m, ord(" "), blen)
-    blocks = len(m)//blen
-    m = util.stringSplit(m, blocks)
+    # prepare - convert to int arrays, find # blocks, split m into blocks of length blen
+    m, k, blocks = util.prepareBC(m, k, binM, binK, blen)
 
     # encrypted ciphertext in blocks of length blen + 1 for initialization vector
     c = [[0] * blen] * (blocks + 1)
@@ -92,19 +85,83 @@ def decryptCBC(k, c, binK=False, binC=False):
     Returns:
         decrypted plaintext message m as binary string 
     """
-    # convert to int arrays
-    c = util.toIntArray(c, binC)
-    k = util.toIntArray(k, binK)
-
-    # split c into blocks of length blen
-    blocks = len(c)//blen
-    c = util.stringSplit(c, blocks)
+    # prepare - convert to int arrays, find # blocks, split c into blocks of length blen
+    c, k, blocks = util.prepareBC(c, k, binC, binK, blen)
 
     m = [[0] * blen] * (blocks - 1)
     # each block m[i] is the result of F^{-1}(k, c[i+1]) XOR c[i]
     for i in range(len(m)):
         m[i] = util.PRPinv(k, c[i+1])
         m[i] = util.XOR(m[i], c[i])
+
+    # unpack nested list and get rid of spaces added in encryption
+    m = util.unpack(m)
+    m = util.removeEnding(m, ord(" "))
+
+    # return m as binary string
+    return util.intArrayToBinaryString(m)
+
+
+def encryptCTR(k, m, binK=False, binM=False):
+    """CTR counter block chaining
+
+    Args:
+        k (string): string (char or binary) that represents the key
+        m (string): string (char or binary) that represents the plaintext message
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binM (bool, optional): true if m is a binary string. Defaults to False.
+
+    Returns:
+        encrypted message c as a binary string 
+    """
+    # prepare - convert to int arrays, find # blocks, split m into blocks of length blen
+    m, k, blocks = util.prepareBC(m, k, binM, binK, blen)
+
+    # get initialization vector (IV)
+    r = [random.randint(0, 256) for _ in range(blen)]
+
+    # encrypted ciphertext in blocks of length blen + 1 for initialization vector
+    c = [[0] * blen] * (blocks + 1)
+    c[0] = r  # initialization vector
+
+    # each block c[i+1] is the resulf of F(k, r) XOR m[i]) (r incremented each loop)
+    for i in range(blocks):
+        Fkr = util.PRP(k, r)
+        c[i+1] = util.XOR(Fkr, m[i])
+        # increment r
+        r = util.addModular(r, 1)
+
+    # convert c into binary string
+    totalCString = [util.intArrayToBinaryString(b) for b in c]
+    totalCString = " ".join(totalCString)
+
+    return totalCString
+
+
+def decryptCTR(k, c, binK=False, binC=False):
+    """decrypts ciphertext c with key k (CTR block cipher)
+
+    Args:
+        k (int array): key int array
+        c (int array): ciphertext int array
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binC (bool, optional): true if c is a binary string. Defaults to False.
+
+    Returns:
+        decrypted plaintext message m as binary string 
+    """
+    # prepare - convert to int arrays, find # blocks, split c into blocks of length blen
+    c, k, blocks = util.prepareBC(c, k, binC, binK, blen)
+
+    m = [[0] * blen] * (blocks - 1)
+    r = c[0]
+
+    # each m[i] = c[i+1] XOR F(k, r)
+    for i in range(len(m)):
+        Fkr = util.PRP(k, r)
+        m[i] = util.XOR(Fkr, c[i+1])
+        # increment r
+        r = util.addModular(r, 1)
 
     # unpack nested list and get rid of spaces added in encryption
     m = util.unpack(m)

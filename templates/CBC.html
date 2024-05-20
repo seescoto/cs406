@@ -101,16 +101,16 @@
 				<p>
 					A simple example of an invertible function is one that just reverses the order of your letters. So if your 
 					original text is "abcd", after putting it into a function <i>f</i>, you'll get "dcba". We know that it's 
-					invertible because if you put it in the inverse function, <i>f<sup>-1</sup></i>, and reverse the letters 
+					invertible because if you put it in the inverse function, <i>f<sup> -1</sup></i>, and reverse the letters 
 					again, you'll get "abcd", which is exactly what you started with. (In this case, <i>f</i> and 
-					<i>f<sup>-1</sup></i> are the same function, meaning you follow the same directions to use both, but that 
+					<i>f<sup> -1</sup></i> are the same function, meaning you follow the same directions to use both, but that 
 					isn't always the case.)
 				</p>
 				<p>
 					Now that we know what an invertible function is, we can conceptualize what CBC block cipher does. We split 
 					our message up into blocks of a specific length, and input each block (along with the key) into our invertible 
 					function. To make sure that it isn't too easy to guess our original message from the encrypted result, we'll 
-					change each block by some predictable amount called the <b>initialization vector (IV)</b>first (a random block of numbers that we choose at the beginning.) This is 
+					change each block by some predictable amount called the <b>initialization vector (IV)</b> first (a random block of numbers that we choose at the beginning.) This is 
 					sort of like adding the new block to our original message's block and then putting it into the function.
 				</p>
 				<p>
@@ -128,8 +128,8 @@
 					<ul>
 						<li>
 							Let our function be <i>f</i>, which reverses the order of anything we give it. (Ex. <i>f</i>("123") = "321".) 
-							Our inverse function is <i>f<sup>-1</sup></i>, which also reverses the order of anything we give it. 
-							(Ex. <i>f<sup>-1</sup></i>("321") = "123")
+							Our inverse function is <i>f<sup> -1</sup></i>, which also reverses the order of anything we give it. 
+							(Ex. <i>f<sup> -1</sup></i>("321") = "123")
 						</li>
 						<li>
 							Let's say that our original message is "hello!". We first split that up into a few different blocks 
@@ -177,7 +177,7 @@
 			<img src="../static/images/CBC.png" alt="Diagram of a CBC block cipher">
 			<p>
 				The idea of a CBC block cipher is very similar to what was shown in the beginner's explanation. We have our 
-				IV,<i>c<sub>0</sub></i>, that was chosen from a random assortment of blocks, and we XOR<b><sup>*</sup></b> it with the first block of 
+				IV, <i>c<sub>0</sub></i>, that was chosen from a random assortment of blocks, and we XOR<b><sup>*</sup></b> it with the first block of 
 				our message, <i>m<sub>1</sub></i>. Then we put it into our invertible function called a pseudo-random permutation (PRP)
 				along with our key to generate the next block of the ciphertext, <i>c<sub>1</sub></i>.
 			</p>
@@ -187,7 +187,7 @@
 				the blocks of the ciphertext together.
 			</p>
 			<p>
-				To get our original message back, we follow the same general format of using our inverse PRP, <i>f<sup>-1</sup></i>
+				To get our original message back, we follow the same general format of using our inverse PRP, <i>f<sup> -1</sup></i>
 				with the key and the <i>ith</i> block of the ciphertext. Then we XOR that with the <i>(i-1)th</i> ciphertext block, 
 				that is the block immediately before it, to get the corresponding message block. Combine them all and we get our original 
 				message back!
