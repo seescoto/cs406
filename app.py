@@ -129,6 +129,35 @@ def CTR():
     return render_template('CTR.html', topbar=topbar)
 
 
+@app.route('/CTR-enc-dec', methods=['POST'])
+def CTREncDec():
+    # get plaintext & key and store if either is in binary format
+    message = request.form.get('inputText')
+    key = request.form.get('key')
+    binaryMessage = request.form.get('binaryInput')
+    binaryKey = request.form.get('binaryKey')
+    encryption = {}
+
+    # only call function if has actual values
+    if (message and key):
+        # if encrypting
+        if request.form.get('submitButton') == "encrypt":
+            resultTextBinary = schemes.encryptCTR(
+                key, message, binK=binaryKey, binM=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+        # else are decrypting
+        else:
+            resultTextBinary = schemes.decryptCTR(
+                key, message, binK=binaryKey, binC=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+
+        # save all data in a dict to keep and display
+        encryption = {"message": message, "key": key,
+                      "resultTextBinary": resultTextBinary, "resultTextReg": resultTextReg}
+
+    return render_template('CTR.html', topbar=topbar, encryption=encryption)
+
+
 @app.route('/OFB')
 def OFB():
     return render_template('OFB.html', topbar=topbar)

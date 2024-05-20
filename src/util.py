@@ -1,5 +1,4 @@
 # utility functions
-from http.client import REQUEST_URI_TOO_LONG
 import re  # regex
 
 

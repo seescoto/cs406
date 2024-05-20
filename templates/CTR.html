@@ -11,5 +11,172 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>CTR Block Cipher</h1>
+
+
+		<form action="/CTR-enc-dec" method="post">
+			<br />
+			<label for="key">
+				Enter your key. This should be a word or phrase that's easy to
+				remember for both you and the person you want to send encrypted
+				messages with.
+			</label>
+			<br />
+			<textarea id="key" name="key" rows="1" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryKey" name="binaryKey" value=True>
+			<label for="binaryKey"> My message is in binary format </label><br>
+			<br>
+
+			<label for="input_text">
+				Enter the message you'd like to encrypt/decrypt:
+			</label>
+			<br />
+			<textarea id="inputText" name="inputText" rows="5" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryInput" name="binaryInput" value=True>
+  			<label for="binaryInput"> My message is in binary format </label><br>
+
+			</br>
+
+			<input type="submit" name="submitButton" value="encrypt" />
+			<input type="submit" name="submitButton" value="decrypt" />
+
+		</form>
+
+		{% if encryption %}
+			<h2>Your encrypted/decrypted text</h2>
+
+			<p> 
+				Note: not all ASCII values are printable using text, so if you're encrypting text, 
+				your ciphertext on the right (the text version) may look weird. The binary representation
+				on the left is what you should copy and paste if you'd like to decrypt it.
+			</p>
+
+			<div class="container">
+				<div class="column">
+					<center>
+						<h3>Binary</h3>
+						<div class="box"> 
+							{{encryption['resultTextBinary']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextBinary'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+
+				<div class="column">
+					<center>
+						<h3>Text</h3>
+						<div class="box"> 
+							{{encryption['resultTextReg']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextReg'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+			</div>
+
+			<script>
+				function copyText(txt) {
+					// copy txt into clipboard 
+					// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
+					navigator.clipboard.writeText(txt);
+				}
+			</script>
+
+		{% endif %}
+
+		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click here for a beginner's explanation of how CTR block cipher works</summary>
+			<p>
+				CTR is a block cipher like CBC, meaning that they both encrypt messages by way of splitting 
+				up your message into separate blocks of information. CTR also uses a pseudo-random function 
+				to encrypt, but the difference here is that the function, <i>f</i>, doesn't necessarily need to 
+				be invertible. It just needs to take two inputs and return an output that looks random to anyone 
+				who doesn't know what the inputs were.
+			</p>
+			<p>
+				CTR is basically the block-cipher version of a one-time pad (as seen <a href="/OTP">here</a>). It 
+				makes up a random first block (the initialization vector, or IV, just like in other block ciphers 
+				we've seen) and uses that as input into the function <i>f</i>, along with the key. Then it operates the 
+				output of the function with the corresponding block of the original message, sort of like adding the two 
+				blocks together to get a new one. In order to make each block suitably different, we edit our IV by adding 
+				one to it every time we go to a new block. This is why it's called the CTR block cipher - it's short for 
+				'counter' block cipher! Once you've operated all the blocks, you can combine them all (along with 
+				your IV) and return them as your encrypted ciphertext.
+			</p>
+			<p>
+				(Simplified) example:
+			</p>
+			<ul>
+				<li>
+					Imagine that you have a key, "5", a message, "1234", and a function <i>f</i> that takes 
+				two inputs and adds them together. (For example, <i>f</i>(1, 5) = 1 + 5 = 6.) 
+				</li>
+				<li>
+					The first step of the CTR block cipher is to split up our message into blocks. In this example, 
+					our blocks will be "12" and "34". 
+				</li>
+				<li>
+					Now we can come up with a random IV - say, "22". To encrypt our first block, we use the function 
+					<i>f</i> with two inputs - our key, "5", and our IV. So now we have <i>f</i>("5", "22") = 5 + 22 = 27. 
+					We then operate this result with the first block of our message, "12",  to get "27" + "12" = "39".
+				</li>
+				<li>
+					Now we can go on to our second block, but first we have to add 1 our IV before we put it into 
+					the function. Now our new block will be <i>f</i>("5", "23") + "34" = "28" + "34" = "62". 
+				</li>
+				<li>
+					Now that we have our encrypted blocks, "39" and "62", we can combine them with our original IV, "22" and 
+					return the encrypted ciphertext, which is "22", "39", "62" combined into "223962". It looks nothing like our 
+					original message, which is exactly what we wanted!
+				</li>
+				<li>
+					To decrypt the message, we use the key (that we know but other people don't) and the IV (the first 
+					block in our encrypted ciphertext) as inputs into our function and operate it with our block of the ciphertext.
+					That is, we have f("5", "22") = 27 and our first non-IV block, "39". To operate them, we should undo what we did before, 
+					so now we have our original block is "39" - "27" = "12".
+				</li>
+				<li>
+					To get the second block, we first increment our IV to be "23" and then follow the same process to get 
+					"62" - <i>f</i>("5", "23") = "62" - "28" = "34". 
+				</li>
+				<li>
+					We can combine the blocks we decrypted, "12" and "34", to get our original message, "1234"!
+				</li>
+
+			</ul>
+		</details>
+		<br>
+		<details class="advanced-explanation">
+			<summary>Click for a more advanced explanation of CTR block cipher</summary>
+			<p>
+				A helpful diagram from chapter 8 of Mike Rosulek's 
+				<a href="https://joyofcryptography.com/">The Joy of Cryptography</a> is shown below.
+			</p>
+			<img src="../static/images/CTR.png" alt="Diagram of a CTR block cipher">
+			<p>
+				The idea of a CTR block cipher is very similar to what was shown in the beginner's explanation. We have our 
+				IV, <i>c<sub>0</sub></i>, that was chosen from a random assortment of blocks, <i>c<sub>0</sub></i> = <i>r</i>. 
+				This, along with our key, <i>k</i>, is the input to our pseudo-random function <i>f</i>. So now we have 
+				<i>f(k, r)</i>, which we XOR<b><sup>*</sup></b> with our first block of our message, <i>m<sub>1</sub></i>. Before we move on to the next 
+				block, we increment <i>r</i> by 1 so that if someone were to find out <i>f(k, r)</i> but not <i>k</i>, they 
+				wouldn't be able to reverse engineer our message. (Recall that the outputs of <i>f</i> look random if you don't know the inputs,
+				so knowing <i>f(k, r)</i>) won't tell you anything about <i>f(k, r+1)</i>).
+			</p>
+			<p>
+				Decryption follows the same format, only you XOR by the corresponding block of ciphertext to get the message block.
+			</p>
+			<p><b><sup>*</sup></b> A detailed explanation of the operation XOR can be found under the advanced explanation on the 
+				one-time pad page, <a href="/OTP">here.</a></p>
+		</details>
+
+		<br><br><br>
 	</body>
 </html>
