@@ -11,5 +11,84 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>OFB Block Cipher</h1>
+
+		<form action="/OFB-enc-dec" method="post">
+			<br />
+			<label for="key">
+				Enter your key. This should be a word or phrase that's easy to
+				remember for both you and the person you want to send encrypted
+				messages with.
+			</label>
+			<br />
+			<textarea id="key" name="key" rows="1" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryKey" name="binaryKey" value=True>
+			<label for="binaryKey"> My message is in binary format </label><br>
+			<br>
+
+			<label for="input_text">
+				Enter the message you'd like to encrypt/decrypt:
+			</label>
+			<br />
+			<textarea id="inputText" name="inputText" rows="5" cols="50"></textarea>
+			<br />
+
+			<input type="checkbox" id="binaryInput" name="binaryInput" value=True>
+  			<label for="binaryInput"> My message is in binary format </label><br>
+
+			</br>
+
+			<input type="submit" name="submitButton" value="encrypt" />
+			<input type="submit" name="submitButton" value="decrypt" />
+
+		</form>
+
+		{% if encryption %}
+			<h2>Your encrypted/decrypted text</h2>
+
+			<p> 
+				Note: not all ASCII values are printable using text, so if you're encrypting text, 
+				your ciphertext on the right (the text version) may look weird. The binary representation
+				on the left is what you should copy and paste if you'd like to decrypt it.
+			</p>
+
+			<div class="container">
+				<div class="column">
+					<center>
+						<h3>Binary</h3>
+						<div class="box"> 
+							{{encryption['resultTextBinary']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextBinary'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+
+				<div class="column">
+					<center>
+						<h3>Text</h3>
+						<div class="box"> 
+							{{encryption['resultTextReg']}}
+						</div> 
+						<br>
+						<button onclick="copyText(`{{ encryption['resultTextReg'] }}`)">Copy to clipboard</button> 
+						<br />
+					</center>
+				</div>
+			</div>
+
+			<script>
+				function copyText(txt) {
+					// copy txt into clipboard 
+					// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
+					navigator.clipboard.writeText(txt);
+				}
+			</script>
+
+		{% endif %}
+
+		<br><br><br>
 	</body>
 </html>

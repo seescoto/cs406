@@ -169,3 +169,69 @@ def decryptCTR(k, c, binK=False, binC=False):
 
     # return m as binary string
     return util.intArrayToBinaryString(m)
+
+
+def encryptOFB(k, m, binK=False, binM=False):
+    """OFB (output feedback) block chaining
+
+    Args:
+        k (string): string (char or binary) that represents the key
+        m (string): string (char or binary) that represents the plaintext message
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binM (bool, optional): true if m is a binary string. Defaults to False.
+
+    Returns:
+        encrypted message c as a binary string 
+    """
+    # prepare - convert to int arrays, find # blocks, split m into blocks of length blen
+    m, k, blocks = util.prepareBC(m, k, binM, binK, blen)
+
+    # get initialization vector (IV)
+    r = [random.randint(0, 256) for _ in range(blen)]
+
+    # encrypted ciphertext in blocks of length blen + 1 for initialization vector
+    c = [[0] * blen] * (blocks + 1)
+    c[0] = r  # initialization vector
+
+    # each block c[i+1] is the result of F(k, r) XOR m[i] (r is updated each loop to be Fkr)
+    for i in range(blocks):
+        r = util.PRP(k, r)
+        c[i+1] = util.XOR(r, m[i])
+
+    # convert c into binary string
+    totalCString = [util.intArrayToBinaryString(b) for b in c]
+    totalCString = " ".join(totalCString)
+
+    return totalCString
+
+
+def decryptOFB(k, c, binK=False, binC=False):
+    """decrypts ciphertext c with key k (OFB block cipher)
+
+    Args:
+        k (int array): key int array
+        c (int array): ciphertext int array
+        binK (bool, optional): true if k is a binary string. Defaults to False.
+        binC (bool, optional): true if c is a binary string. Defaults to False.
+
+    Returns:
+        decrypted plaintext message m as binary string 
+    """
+    # prepare - convert to int arrays, find # blocks, split m into blocks of length blen
+    c, k, blocks = util.prepareBC(c, k, binC, binK, blen)
+
+    # create int array for m and get r = c[0]
+    m = [[0] * blen] * (blocks - 1)
+    r = c[0]
+
+    # each m[i] is c[i+1] XOR F(k, r) (r is updated to be Fkr each loop)
+    for i in range(1, blocks):
+        m[i-1] = util.XOR(c[i], util.PRP(k, r))
+        r = util.PRP(k, r)
+
+    # unpack nested list and get rid of spaces added in encryption
+    m = util.unpack(m)
+    m = util.removeEnding(m, ord(" "))
+
+    # return m as binary string
+    return util.intArrayToBinaryString(m)

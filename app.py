@@ -163,6 +163,35 @@ def OFB():
     return render_template('OFB.html', topbar=topbar)
 
 
+@app.route('/OFB-enc-dec', methods=['POST'])
+def OFBEncDec():
+    # get plaintext & key and store if either is in binary format
+    message = request.form.get('inputText')
+    key = request.form.get('key')
+    binaryMessage = request.form.get('binaryInput')
+    binaryKey = request.form.get('binaryKey')
+    encryption = {}
+
+    # only call function if has actual values
+    if (message and key):
+        # if encrypting
+        if request.form.get('submitButton') == "encrypt":
+            resultTextBinary = schemes.encryptOFB(
+                key, message, binK=binaryKey, binM=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+        # else are decrypting
+        else:
+            resultTextBinary = schemes.decryptOFB(
+                key, message, binK=binaryKey, binC=binaryMessage)
+            resultTextReg = util.binaryStringToString(resultTextBinary)
+
+        # save all data in a dict to keep and display
+        encryption = {"message": message, "key": key,
+                      "resultTextBinary": resultTextBinary, "resultTextReg": resultTextReg}
+
+    return render_template('OFB.html', topbar=topbar, encryption=encryption)
+
+
 @app.route('/RSA')
 def RSA():
     return render_template('RSA.html', topbar=topbar)
