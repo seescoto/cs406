@@ -90,5 +90,82 @@
 		{% endif %}
 
 		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click here for a beginner's explanation of how OFB block cipher works</summary>
+			<p>
+				OFB ("output feedback") block cipher is a block cipher like CBC and CTR, meaning that they all 
+				encrypt messages by way of splitting up your message into separate blocks of information. OFB also uses a pseudo-random function 
+				to encrypt, and this one (just like in CTR) doesn't necessarily need to be invertible. 
+			</p>
+			<p>
+				(Simplified) example:
+			</p>
+			<ul>
+				<li>
+					Imagine that you have a key, "6", a message, "1234", and a function <i>f</i> that takes 
+				two inputs and adds them together. (For example, <i>f</i>(1, 5) = 1 + 5 = 6.) 
+				</li>
+				<li>
+					The first step of the CTR block cipher is to split up our message into blocks. In this example, 
+					our blocks will be "12" and "34". 
+				</li>
+				<li>
+					Now we can come up with a random IV - say, "22". To encrypt our first block, we use the function 
+					<i>f</i> with two inputs - our key, "6", and our IV. So now we have <i>f</i>("6", "22") = 6 + 22 = 28. 
+					(This number, the output of our function, is important! We'll use it as input in our next block.)
+					We then operate this result with the first block of our message, "12",  to get "28" + "12" = "40".
+				</li>
+				<li>
+					Now we can go on to our second block, which uses the output of our last block, 28, and our key from before, 5. 
+					That is, we have f("6", "28") = 6 + 28 = 34. We then operate this result with the corresponding block of our message, 
+					"34", to get 34 + 34 = 68. This is the next block of our ciphertext
+				</li>
+				<li>
+					Now that we have our encrypted blocks, "40" and "68", we can combine them with our original IV, "22" and 
+					return the encrypted ciphertext, which is "22", "40", "68" combined into "224068". It looks nothing like our 
+					original message, which is exactly what we wanted!
+				</li>
+				<li>
+					To decrypt the message, we use the key (that we know but other people don't) and the IV (the first 
+					block in our encrypted ciphertext) as inputs into our function and operate it with our block of the ciphertext.
+					That is, we have f("6", "22") = 28 and our first non-IV block, "40". To operate them, we should undo what we did before, 
+					so now we have our original block is "40" - "28" = "12".
+				</li>
+				<li>
+					To get the second block, we use the output of our function from last block, 28, and then follow the same process to get 
+					"68" - <i>f</i>("6", "28") = "68" - "34" = "34". 
+				</li>
+				<li>
+					We can combine the blocks we decrypted, "12" and "34", to get our original message, "1234"!
+				</li>
+
+			</ul>
+		</details>
+		<br>
+		<details class="advanced-explanation">
+			<summary>Click for a more advanced explanation of OFB block cipher</summary>
+			<p>
+				A helpful diagram from chapter 8 of Mike Rosulek's 
+				<a href="https://joyofcryptography.com/">The Joy of Cryptography</a> is shown below.
+			</p>
+			<img src="../static/images/OFB.png" alt="Diagram of an OFB block cipher">
+			<p>
+				The idea of a OFB block cipher is very similar to what was shown in the beginner's explanation. We have our 
+				IV, <i>c<sub>0</sub></i>, that was chosen from a random assortment of blocks, <i>c<sub>0</sub></i> = <i>r</i>. 
+				This, along with our key, <i>k</i>, is the input to our pseudo-random function <i>f</i>. So now we have 
+				<i>f(k, r)</i>. (This output will be used as the input to our function in the next block, so we can reassign <i>r = F(k, r)</i>) 
+				Then  we XOR<b><sup>*</sup></b> with our first block of our message, <i>m<sub>1</sub></i>. We continue this pattern, 
+				using <i>r = F(k, r)</i> and then XOR-ing <i>r</i> with <i>m<sub>i</sub></i> to create <i>c<sub>i+1</sub></i>
+			</p>
+			<p>
+				Decryption follows the same format, only you XOR by the corresponding block of ciphertext to get the message block.
+			</p>
+			<p><b><sup>*</sup></b> A detailed explanation of the operation XOR can be found under the advanced explanation on the 
+				one-time pad page, <a href="/OTP">here.</a></p>
+		</details>
+
+		<br><br><br>
+	
 	</body>
 </html>
