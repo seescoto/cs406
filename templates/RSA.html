@@ -27,21 +27,33 @@
 				decrypt a message sent with the public key.
 			</p>
 			<p>
-				For the message receiver: generate public and private keys below,
+				<b>For the message receiver</b>: generate public and private keys below,
 				then send the public key, (N, e), to your partner. They will encrypt
 				a message number with this public key using the form below, and you
 				can decrypt it with your private key.
 			</p>
 			<p>
-				For the message sender: your partner should have shared with you a
+				<b>For the message sender</b>: your partner should have shared with you a
 				public key, (N, e). Use that to encrypt your message number and you
 				can send that to your partner for them to decrypt.
 			</p>
+			<br>
+			<p>
+				Note: this is a simplified version of what modern encryption looks
+				like. To limit the computational power used here,
+				<b>only numbers</b> can be encrypted/decrypted on this scheme.
+				Additionally, this scheme isn't secure! To be secure against outside attacks, RSA's must
+				be hashed (meaning that we input your message into a separate, shared,
+				complex function before you encrypt/decrypt it). Because this web app
+				is just for poops and giggles, I didn't use a hash function, so don't
+				send any "dangerous" numbers that you wouldn't want to get out ;)
+			</p>
 		</details>
 		
+		<h3>Generate your keys</h3>
 
 		<br />
-		<form action="/RSA-gen-keys" action="POST">
+		<form action="/RSA-gen-keys" method="post">
 			<br />
 			<label for="p">
 				Enter a unique prime number, <i>p</i>. This will be multiplied with
@@ -79,7 +91,7 @@
 				/>
 			</p>
 
-			<input type="checkbox" id="choosePQ" name="choosePQ" value=True />
+			<input type="checkbox" id="choosePQ" name="choosePQ">
 			<label for="choosePQ"> Choose <i>p</i> and <i>q</i> for me </label>
 			<br>
 
@@ -97,6 +109,14 @@
 		{% if keys %}
 			<h2>Your generated keys</h2>
 			<center>
+			<p>
+				Note: your key values for <i>d</i> and <i>e</i> were generated randomly. It is possible to 
+				pick <i>d</i> and then determine <i>e</i> from that, but because <i>d</i> has very specific 
+				requirements with respect to <i>p</i> and <i>q</i>, it makes more sense to choose for the user 
+				so that the scheme always works. If you'd like to learn more about how to generate these values 
+				for yourself, a good source with a simple explanation of it can be found 
+				<a href="https://www.cryptool.org/en/cto/rsa-step-by-step/">here</a>.  
+			</p>
 			<div class="container">
 				<div class="column">
 					<center>
@@ -154,17 +174,120 @@
 		
 		{% endif %}
 	
+		<br>
+		<h3>Encrypt/decrypt your message number</h3>
+		<form action="RSA-enc-dec" method="post">
+			<label for="N">
+				Enter the first half of your key (public or private). In both cases, 
+				this value should be <i>N</i>
+			</label>
+			<input type="number" id="N" name="N" min="2"/>
+			<br><br>
+			
+			<label for="exp">
+				Enter the second half of your key (public or private). In the case of a public key (where you are encoding a message), this should be <i>e</i>. 
+				In the case of a private key (where you are decoding a message) this should be <i>d</i>.
+			</label>
+			<input type="number" id="exp" name="exp" min="2"/>
+			<br><br>
+
+			<label for="m">
+				Enter the message number you'd like to encode/decode. 
+				<b>This number must be less than <i>N</i>.</b>
+			</label>
+			<input type="number" id="m" name="m"/>
+			<br><br>
+
+			<input type="submit" value="Submit" />
+			<br>
+		</form>
+
+		{% if encryption %}
+			<h2>Your encrypted/decrypted message number</h2>
+			<div class="box"> 
+				{{encryption['c']}}
+			</div> 
+			<br>
+			<button onclick="copyText(`{{ encryption['c'] }}`)">Copy to clipboard</button> 
+			<br />
+
+		{% endif %}
+
+		<br><br><br>
+
+		<details class="beginner-explanation">
+			<summary>Click here for a beginner's explanation of how RSA encryption works</summary>
+			<p>
+				RSA encryption is different than other schemes in this app because it utilizes a public key,
+				<i>(N, e)</i>, and a private key, <i>(N, d)</i>. Though only the person who generated the keys 
+				knows the private key, the entire world could know the public key and that would be just fine!
+				That's because you can encrypt messages with the public key, but not decrypt them.
+			</p>
+			<p>
+				RSA encryption relies on something called <i>modular exponentiation</i>, which can be broken down 
+				into two parts. 
+			</p>
+			<p>
+				The <b>modular</b> part basically means that you start over once you reach a certain number, 
+				which is <i>N</i> in this case. If you remember learning about remainders in division in elementary school,
+				modulus function just utilizes the remainder instead of the usual answer to division. For example, 10 / 3 gives you 3 with a remainder of 1. 10 % 3 (which stands for 10 <b>modulo</b> 3)
+				is 1. Another way of thinking of this is counting in 3's until you get to 10, starting over every time 
+				you get to 3. So 10 can be (1, 2, 3), (1, 2, 3), (1, 2, 3), (1). The 'left over' count is 1, since we didn't get 
+				all the way to 3 that time.
+			</p>
+			<p>
+				<b>Exponentiation</b> is something you probably learned about in middle or high school: it's just multiplying 
+				something by itself a specific number of times. For example, 2<sup>3</sup> is just 2 * 2 * 2 - that is, 2
+				multiplied by itself 3 times. 
+			</p>
+			<p>
+				We can put this together by exponentiating and then finding the 'remainder' in terms of <i>N</i>. For example, 
+				if your message number <i>m</i> is 5, and your public key <i>(N, e)</i> is (100, 3), we encrypt that by taking
+				<i> m<sup>e</sup></i> = 5<sup>3</sup> = 125, and then operating that modulo <i>N</i>, so <i>m<sup>e</sup> % N</i> = 
+				5<sup>3</sup> % 100 = 125 % 100 = 25. This is because 125 divided by 100 is 100 with remainder 25. So our encrypted number 
+				is now 25.
+			</p>
+			<p>
+				Decrypting an encrypted message with the private key is a little more complicated to explain, because it deals with 
+				something called an inverse. You can think of it like how any number <i>m</i> has a multiplicative inverse in <i>1/m</i>. 
+				That is, <i>m</i> * (1/<i>m</i>) = 1 for all non-zero numbers<i> m</i>. For example, the multiplicative inverse of 
+				2 is 1/2. When working in modulo, certain numbers have an inverse when it comes to exponentation. Because <i>e</i> and 
+				<i>d</i> (the exponent components of the public and private keys) are inverses modulo <i>N</i>, <i>(m<sup>e</sup>)<sup>d</sup></i> 
+				will give you back <i>m</i>.
+			</p>
+			<p>
+				The reason that RSA is secure (that is, no one will be able to decrypt your message if you don't want them to) is because an 
+				inverse is really hard to find if you don't already know it - especially when it comes to the big numbers that modern cryptographic 
+				schemes use.
+			</p>
+		</details>
+		<br>
+		<details class="advanced-explanation">
+			<summary>Click here for a more advanced explanation of RSA encryption</summary>
+			<p>
+				Using the information from the beginner's explanation above, we can start to dig in to why and how RSA really works.
+				We already know that as long as our message number is less than <i>N</i>, we can exponentiate it with a number that 
+				has an inverse to encrypt and decrypt it. Well, something we also know is that given a number <i>N = p * q</i>, there are exactly 
+				&Phi;(N) = (p-1)(q-1) numbers that have an inverse modulo <i>&Phi;(N)</i>. So long as the number is less than <i>N</i> and has no common divisors with 
+				&Phi;(N), it will have an inverse and will allow us to find <i>(m<sup>e</sup>)<sup>d</sup> = m</i>.
+			</p>
+			<p>
+				Since we have a fool-proof way of finding exponents that have inverses, we can generate them and use them as our public and private keys. We know that someone 
+				else won't be able to generate the inverse to our public exponent, <i>e</i>, because only we know <i>p</i> and <i>q</i>, and therefore we're the only ones 
+				who know &Phi;(N). Since RSA uses really big numbers for <i>N, p</i>, and <i>q</i>, it would take an insane amount of time to go through all the possible 
+				values that the private exponent, <i>d</i>, could be, and our message is safe.
+			</p>
+			<p>
+				If we let <i>m = x</i> and <i>m<sup>e</sup> = y</i>, here's a good diagram from chapter 13 of Mike Rosulek's
+				 <a href="https://joyofcryptography.com/">The Joy of Cryptography</a>  showing exactly how RSA works.
+			</p>
+			<img src="../static/images/RSA.png" alt="Simple diagram of RSA encryption and decryption">
+		</details>
+		
+
+		<br><br><br>
 
 
-		<p>
-			Note: this is a simplified version of what modern encryption looks
-			like. To limit the computational power used here,
-			<b>only numbers</b> can be encrypted/decrypted on this scheme.
-			Additionally, this scheme isn't secure! To be truly secure, RSA's must
-			be hashed (meaning that we input your message into a separate, shared,
-			complex function before you encrypt/decrypt it). Because this web app
-			is just for poops and giggles, I didn't use a hash function, so don't
-			send any "dangerous" numbers that you wouldn't want to get out!
-		</p>
+		
 	</body>
 </html>

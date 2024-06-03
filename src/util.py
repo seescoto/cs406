@@ -446,10 +446,8 @@ def PRPinv(k, v):
 
 
 def invalidRSAPrimes(p, q):
-    nones = (p == None or q == None)
-    same = (p == q)
-    notPrimes = not (isPrime(p) and isPrime(q))
-    return (nones or same or notPrimes)
+
+    return ((p == None) or (q == None) or (p == q) or not (isPrime(p) and isPrime(q)))
 
 
 def isPrime(n):
@@ -459,7 +457,7 @@ def isPrime(n):
         n (int): a prime(?) number
     """
 
-    if n <= 1:
+    if (not isinstance(n, int)) or (n <= 1):
         return False
 
     i = 2

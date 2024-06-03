@@ -255,7 +255,7 @@ def getKeysRSA(p=None, q=None):
     # if no (or invalid) p, q given, generate them
     if (util.invalidRSAPrimes(p, q)):
         # find p, q, N
-        maxNum = 1000
+        maxNum = 100
         p = util.getPrime(10, maxNum)
         q = util.getPrime(10, maxNum)
         while (q == p):

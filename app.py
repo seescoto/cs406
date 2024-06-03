@@ -197,7 +197,7 @@ def RSA():
     return render_template('RSA.html', topbar=topbar, keys=None, encryption=None)
 
 
-@app.route('/RSA-gen-keys')
+@app.route('/RSA-gen-keys', methods=['POST'])
 def RSAGenKeys():
     p = request.form.get('p')
     q = request.form.get('q')
@@ -209,10 +209,23 @@ def RSAGenKeys():
         q = None
 
     # generate keys from p/q
-    p, q, N, e, d = schemes.getKeysRSA(p=p, q=q)
+    p, q, N, e, d = schemes.getKeysRSA(p, q)
     keys = {"p": p, "q": q, "N": N, "e": e, "d": d}
 
     return render_template('RSA.html', topbar=topbar, keys=keys, encryption=None)
+
+
+@app.route('/RSA-enc-dec', methods=['POST'])
+def RSAEncDec():
+    N = request.form.get('N')
+    exp = request.form.get('exp')
+    m = request.form.get('m')
+
+    c = schemes.RSA(int(m), int(exp), int(N))
+
+    encryption = {"c": c}
+
+    return render_template('RSA.html', topbar=topbar, keys=None, encryption=encryption)
 
 
 if __name__ == '__main__':
