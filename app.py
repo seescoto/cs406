@@ -194,7 +194,25 @@ def OFBEncDec():
 
 @app.route('/RSA')
 def RSA():
-    return render_template('RSA.html', topbar=topbar)
+    return render_template('RSA.html', topbar=topbar, keys=None, encryption=None)
+
+
+@app.route('/RSA-gen-keys')
+def RSAGenKeys():
+    p = request.form.get('p')
+    q = request.form.get('q')
+    choosePQ = request.form.get('choosePQ')
+
+    # if user asked for function to choose p and q, set to None so chosen in function
+    if choosePQ == True:
+        p = None
+        q = None
+
+    # generate keys from p/q
+    p, q, N, e, d = schemes.getKeysRSA(p=p, q=q)
+    keys = {"p": p, "q": q, "N": N, "e": e, "d": d}
+
+    return render_template('RSA.html', topbar=topbar, keys=keys, encryption=None)
 
 
 if __name__ == '__main__':

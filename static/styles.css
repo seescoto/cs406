@@ -15,12 +15,14 @@ h4 {
 .box {
 	width: 200px;
 	border: 1px solid var(--dgrey);
+	text-align: center;
 }
 
 /* rows and columns stuff */
 .container {
 	display: flex; /* Use flexbox */
 	justify-content: space-between; /* Distribute space between columns */
+	text-align: center;
 }
 
 .column {

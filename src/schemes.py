@@ -246,7 +246,7 @@ def getKeysRSA(p=None, q=None):
         q (int, optional): prime number such that p != q. defaults to None
 
     Returns:
-        (N, e, d).
+        (p, q, N, e, d).
         N = p * q,
         e and d are multiplicative inverses so e * d % phi(N) = 1,
         e is the public inverse, d is private
@@ -267,7 +267,7 @@ def getKeysRSA(p=None, q=None):
     d = util.getCoPrime(phiN)  # private key
     e = util.getMultInverse(d, phiN)  # public key
 
-    return (N, e, d)
+    return (p, q, N, e, d)
 
 
 def RSA(m, e, N):

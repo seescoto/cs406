@@ -38,7 +38,123 @@
 				can send that to your partner for them to decrypt.
 			</p>
 		</details>
+		
+
 		<br />
+		<form action="/RSA-gen-keys" action="POST">
+			<br />
+			<label for="p">
+				Enter a unique prime number, <i>p</i>. This will be multiplied with
+				the other prime, <i>q</i> to generate <i>N</i>, a component of your
+				public and private keys.
+				<b>This can not be the same number as <i>q</i>.</b>
+			</label>
+			<p>
+				<i>p</i> =
+				<input
+					type="number"
+					id="p"
+					name="p"
+					min="2"
+					max="1000"
+					value="89"
+				/>
+			</p>
+
+			<label for="q">
+				Enter a unique prime number, <i>q</i>. This will be multiplied with
+				the other prime, <i>q</i> to generate <i>N</i>, a component of your
+				public and private keys.
+				<b>This can not be the same number as <i>p</i>.</b>
+			</label>
+			<p>
+				<i>q</i> =
+				<input
+					type="number"
+					id="q"
+					name="q"
+					min="2"
+					max="1000"
+					value="83"
+				/>
+			</p>
+
+			<input type="checkbox" id="choosePQ" name="choosePQ" value=True />
+			<label for="choosePQ"> Choose <i>p</i> and <i>q</i> for me </label>
+			<br>
+
+			<input type="submit" value="Generate keys" />
+		</form>
+
+		<script>
+			function copyText(txt) {
+				// copy txt into clipboard 
+				// put txt in format `{{ TXT }}` if you want the value of the variable not a string literal
+				navigator.clipboard.writeText(txt);
+			}
+		</script>
+
+		{% if keys %}
+			<h2>Your generated keys</h2>
+			<center>
+			<div class="container">
+				<div class="column">
+					<center>
+					<h3><i>p </i>and <i>q</i></h3>
+					<p>
+						<i>p</i> = <div class="box"> 
+							{{keys['p']}}
+						</div> 
+						<button onclick="copyText(`{{ keys['p'] }}`)">Copy to clipboard</button> 
+					</p>
+					<p>
+						<i>q</i> = <div class="box"> 
+							{{keys['q']}}
+						</div> 
+						<button onclick="copyText(`{{ keys['q'] }}`)">Copy to clipboard</button> 
+					</p>
+					</center>
+				</div>
+
+				<div class="column">
+					<center>
+					<h3>Your private key <i>(N, d)</i></h3>
+					<p>
+						<i>N</i> = <div class="box"> 
+							{{keys['N']}}
+						</div> 
+						<button onclick="copyText(`{{ keys['N'] }}`)">Copy to clipboard</button> 
+					</p>
+					<p>
+						<i>d</i> = <div class="box"> {{keys['d']}}</div> 
+						<button onclick="copyText(`{{ keys['d'] }}`)">Copy to clipboard</button> 
+					</p>
+					</center>
+				</div>
+
+				<div class="column">
+					<center>
+					<h3>Your public key <i>(N, e)</i></h3>
+					<p>
+						<i>N</i> = <div class="box"> 
+							{{keys['N']}}
+						</div> 
+						<button onclick="copyText(`{{ keys['N'] }}`)">Copy to clipboard</button> 
+					</p>
+					<p>
+						<i>e</i> = <div class="box"> 
+							{{keys['e']}}
+						</div> 
+						<button onclick="copyText(`{{ keys['e'] }}`)">Copy to clipboard</button> 
+					</p>
+					</center>
+				</div>
+			</div>
+			</center>
+		
+		{% endif %}
+	
+
 
 		<p>
 			Note: this is a simplified version of what modern encryption looks
@@ -50,18 +166,5 @@
 			is just for poops and giggles, I didn't use a hash function, so don't
 			send any "dangerous" numbers that you wouldn't want to get out!
 		</p>
-
-		<br />
-
-		<form action="POST">
-			<br />
-			<label for="p">
-				Enter a prime number, <i>p</i>. This will be multiplied with the
-				other prime, <i>q</i> to generate <i>N</i>, a component of your
-				public and private keys.
-			</label>
-			<br />
-			<input
-		</form>
 	</body>
 </html>

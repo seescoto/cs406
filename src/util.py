@@ -446,7 +446,10 @@ def PRPinv(k, v):
 
 
 def invalidRSAPrimes(p, q):
-    return (p == None) or (q == None) or (p == q) or (not isPrime(p)) or (not isPrime(q))
+    nones = (p == None or q == None)
+    same = (p == q)
+    notPrimes = not (isPrime(p) and isPrime(q))
+    return (nones or same or notPrimes)
 
 
 def isPrime(n):
@@ -472,22 +475,22 @@ def isPrime(n):
     return True
 
 
-def getPrime(min, max):
-    """generates a prime number in the range [2, max]
+def getPrime(minV, maxV):
+    """generates a prime number in the range [2, maxV]
 
     Args:
-        max (int): maximum number that the prime could be
+        maxV (int): maximum number that the prime could be
     """
     # if too small a number, return 1
-    if (max <= 2 or max <= min):
+    if (maxV <= 2 or maxV <= minV):
         return 1
 
     loop = 0
     while (loop < 20):
-        # generate a random number in the range, find smallest prime between n and max
-        # if no primes from n to max, generate new n and try again
-        n = random.randint(min, max)
-        while (n <= max):
+        # generate a random number in the range, find smallest prime between n and maxV
+        # if no primes from n to maxV, generate new n and try again
+        n = random.randint(minV, maxV)
+        while (n <= maxV):
             if (isPrime(n)):
                 return n
             # only increase by odds since only even prime is 2
@@ -508,14 +511,14 @@ def getCoPrime(n):
         n (int): int to generate a coprime int for
     """
     # if too small a number, return 1
-    if (max <= 3):
+    if (n <= 3):
         return 1
 
     loop = 0
     while (loop < 20):
         # generate a random number in the range, find smallest coprime val between m and n
         # if no coprime vals from m to n, generate new m and try again
-        m = random.randint(2, max)
+        m = random.randint(2, n)
         while (m < n):
             if (gcd(m, n) == 1):
                 return m
