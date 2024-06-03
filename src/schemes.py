@@ -235,3 +235,50 @@ def decryptOFB(k, c, binK=False, binC=False):
 
     # return m as binary string
     return util.intArrayToBinaryString(m)
+
+
+def getKeysRSA(p=None, q=None):
+    """given two distinct primes p, and q, return N = p * q and multiplicative inverses e and d 
+    such that ( e * d % phi(N) = 1 ) where phi(N) is euler's totient function phi(N) = (p-1)*(q-1)
+
+    Args:
+        p (int, optional): prime number such that p != q. defaults to None
+        q (int, optional): prime number such that p != q. defaults to None
+
+    Returns:
+        (N, e, d).
+        N = p * q,
+        e and d are multiplicative inverses so e * d % phi(N) = 1,
+        e is the public inverse, d is private
+
+    """
+    # if no (or invalid) p, q given, generate them
+    if (util.invalidRSAPrimes(p, q)):
+        # find p, q, N
+        maxNum = 1000
+        p = util.getPrime(10, maxNum)
+        q = util.getPrime(10, maxNum)
+        while (q == p):
+            q = util.getPrime(maxNum)
+    N = p * q
+
+    # get e and d
+    phiN = (p-1)*(q-1)
+    d = util.getCoPrime(phiN)  # private key
+    e = util.getMultInverse(d, phiN)  # public key
+
+    return (N, e, d)
+
+
+def RSA(m, e, N):
+    """unhashed RSA scheme (not secure! just for educational purposes!)
+
+    Args:
+        m (int): message/ciphertext to encrypt/decrypt (integer less than N)
+        e (int): key exponent
+        N (int): modular value
+
+    Returns:
+        c (int): encrypted/decrypted message/ciphertext c = m^e % N
+    """
+    return util.modExp(m, e, N)

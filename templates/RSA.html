@@ -11,5 +11,57 @@
 	<body>
 		{%include 'nav.html' %}
 		<h1>RSA</h1>
+
+		<br />
+		<details class="how to">
+			<summary>How to use this page:</summary>
+			<p>
+				RSA encryption is a little different than previous schemes on this
+				app. Instead of coming up with a key together with the person you'd
+				like to send messages with, RSA uses two keys: a public one, and a
+				private one. One person (the person who wants to receive the
+				message) comes up with both keys, the public one, (N, e), and the
+				private one, (N, d). Then they share the public key with their
+				partner, or with the entire world if they'd like to! Because only
+				they have the private key, they'll be the only person who can
+				decrypt a message sent with the public key.
+			</p>
+			<p>
+				For the message receiver: generate public and private keys below,
+				then send the public key, (N, e), to your partner. They will encrypt
+				a message number with this public key using the form below, and you
+				can decrypt it with your private key.
+			</p>
+			<p>
+				For the message sender: your partner should have shared with you a
+				public key, (N, e). Use that to encrypt your message number and you
+				can send that to your partner for them to decrypt.
+			</p>
+		</details>
+		<br />
+
+		<p>
+			Note: this is a simplified version of what modern encryption looks
+			like. To limit the computational power used here,
+			<b>only numbers</b> can be encrypted/decrypted on this scheme.
+			Additionally, this scheme isn't secure! To be truly secure, RSA's must
+			be hashed (meaning that we input your message into a separate, shared,
+			complex function before you encrypt/decrypt it). Because this web app
+			is just for poops and giggles, I didn't use a hash function, so don't
+			send any "dangerous" numbers that you wouldn't want to get out!
+		</p>
+
+		<br />
+
+		<form action="POST">
+			<br />
+			<label for="p">
+				Enter a prime number, <i>p</i>. This will be multiplied with the
+				other prime, <i>q</i> to generate <i>N</i>, a component of your
+				public and private keys.
+			</label>
+			<br />
+			<input
+		</form>
 	</body>
 </html>

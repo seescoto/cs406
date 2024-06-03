@@ -1,5 +1,6 @@
 # utility functions
 import re  # regex
+import random
 
 
 def XOR(arr1, arr2):
@@ -442,3 +443,128 @@ def PRPinv(k, v):
         v[0] = newV
 
     return v[0] + v[1]
+
+
+def invalidRSAPrimes(p, q):
+    return (p == None) or (q == None) or (p == q) or (not isPrime(p)) or (not isPrime(q))
+
+
+def isPrime(n):
+    """returns true if n is prime, else returns false
+
+    Args:
+        n (int): a prime(?) number
+    """
+
+    if n <= 1:
+        return False
+
+    i = 2
+    top = n//i
+    # test if divisible -
+    # only need to test up to n//i bc anything above would be divisible by something less than i
+    while (i < top + 1):
+        if (n % i == 0):
+            return False
+        i += 1
+        top = n//i
+
+    return True
+
+
+def getPrime(min, max):
+    """generates a prime number in the range [2, max]
+
+    Args:
+        max (int): maximum number that the prime could be
+    """
+    # if too small a number, return 1
+    if (max <= 2 or max <= min):
+        return 1
+
+    loop = 0
+    while (loop < 20):
+        # generate a random number in the range, find smallest prime between n and max
+        # if no primes from n to max, generate new n and try again
+        n = random.randint(min, max)
+        while (n <= max):
+            if (isPrime(n)):
+                return n
+            # only increase by odds since only even prime is 2
+            if (n % 2 == 0):
+                n += 1
+            else:
+                n += 2
+        loop += 1
+
+    # if haven't found after 20 loops, just return 1
+    return 1
+
+
+def getCoPrime(n):
+    """return a number m < n such that gcd(n, m) = 1
+
+    Args:
+        n (int): int to generate a coprime int for
+    """
+    # if too small a number, return 1
+    if (max <= 3):
+        return 1
+
+    loop = 0
+    while (loop < 20):
+        # generate a random number in the range, find smallest coprime val between m and n
+        # if no coprime vals from m to n, generate new m and try again
+        m = random.randint(2, max)
+        while (m < n):
+            if (gcd(m, n) == 1):
+                return m
+            m += 1
+        loop += 1
+
+    # if haven't found after 20 loops, just return 1
+    return 1
+
+
+def gcd(m, n):
+    res = min(m, n)
+
+    while res > 0:
+        if m % res == 0 and n % res == 0:
+            break
+        res -= 1
+
+    return res
+
+
+def getMultInverse(a, n):
+    """return b such that (a * b % n) = 1
+
+    Args:
+        a (int): element to find inverse for
+        n (int): mod
+    """
+
+    for b in range(1, n):
+        if (a * b) % n == 1:
+            return b
+
+    return -1
+
+
+def modExp(x, e, N):
+    """returns x^e % N, less computationally intensive. from mike rosulek's "The Joy of Cryptography".
+
+    Args:
+        x (int): value to be exponentiated
+        e (int): exponent
+        N (int): modular value        
+    """
+
+    if e == 0:
+        return 1
+    # if even
+    if (e % 2 == 0):
+        return (modExp(x, e/2, N)**2) % N
+    # else is odd
+    return (modExp(x, (e-1)/2, N)**2 * x) % N
