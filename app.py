@@ -199,18 +199,20 @@ def RSA():
 
 @app.route('/RSA-gen-keys', methods=['POST'])
 def RSAGenKeys():
-    p = request.form.get('p')
-    q = request.form.get('q')
+    p = int(request.form.get('p'))
+    q = int(request.form.get('q'))
     choosePQ = request.form.get('choosePQ')
+    keys = {}
 
     # if user asked for function to choose p and q, set to None so chosen in function
-    if choosePQ == True:
+    if choosePQ:
         p = None
         q = None
 
     # generate keys from p/q
-    p, q, N, e, d = schemes.getKeysRSA(p, q)
-    keys = {"p": p, "q": q, "N": N, "e": e, "d": d}
+    if request.form.get('genKeys'):
+        newP, newQ, N, e, d = schemes.getKeysRSA(p, q)
+        keys = {"p": newP, "q": newQ, "N": N, "e": e, "d": d}
 
     return render_template('RSA.html', topbar=topbar, keys=keys, encryption=None)
 
