@@ -4,6 +4,18 @@ import random
 
 
 def XOR(arr1, arr2):
+    """XOR two arrays of integers
+
+    Args:
+        arr1 (int array): 
+        arr2 (int array): 
+
+    Raises:
+        ValueError: if arr1 and arr2 are not the same length, raises value error
+
+    Returns:
+        int array: int array with each element being the XORED result of the corresponding elements in arr1 and arr2
+    """
     # XOR two arrays of integers
     if len(arr1) != len(arr2):
         raise ValueError("Arrays are not the same length, can't be XORED")
@@ -12,17 +24,41 @@ def XOR(arr1, arr2):
 
 
 def stringToIntArray(string):
+    """convert a string into an int array 
+
+    Args:
+        string (str): _description_
+
+    Returns:
+        int array: each element is the ascii value of its corresponding character in input string
+    """
     # make a string into an integer array - each element is the int representation of the character in that index
     # ord(character) transforms a char to the int that it represents in ascii
     return [ord(c) for c in string]
 
 
 def intArrayToString(arr):
+    """converts an int array into a string
+
+    Args:
+        arr (int array):
+
+    Returns:
+        str: each int in the int array is turned into a character based on the ascii table and combined into the returning string.
+    """
     # makes an int array into a string - each int will be an ascii char
-    return "".join([chr(i) for i in arr])
+    return "".join([chr(i % 256) for i in arr])
 
 
 def splitBinaryString(binString):
+    """splits a binary string into a string arr with each element being 1 byte
+
+    Args:
+        binString (str): string with only 0's and 1's
+
+    Returns:
+        str array:
+    """
     if (re.findall(r'\s+', binString)):
         # if contains whitespace, split by whitespace
         binString = binString.split()
@@ -33,12 +69,29 @@ def splitBinaryString(binString):
 
 
 def binaryStringToIntArray(binString):
+    """converts a binary string into a corresponding int array
+
+    Args:
+        binString (str): string with only 0's and 1's 
+
+    Returns:
+        int array: each byte in binString is converted into an integer and combined into an array that 
+        is returned to the user
+    """
     # given a string of 0's and 1's (as characters)
     # convert it to an int array where each 'byte' becomes an integer in the array
     return [int(binByte, 2) for binByte in splitBinaryString(binString)]
 
 
 def intToBinaryString(num):
+    """converts an int into a binary string
+
+    Args:
+        num (int): 
+
+    Returns:
+        str: binary string (only 0's, 1's, spaces) that represents the input number
+    """
     # converts an integer into a binary string (separated by spaces)
 
     # convert, remove '0b' prefix, add 0's to end so it divides 8
@@ -55,6 +108,14 @@ def intToBinaryString(num):
 
 
 def binaryStringToInt(string):
+    """converts a binary string into an integer
+
+    Args:
+        string (str): binary string (contains only 0's, 1's, spaces)
+
+    Returns:
+        int: int corresponding to the value of the string in binary
+    """
     return int(string.replace(" ", ""), 2)
 
 
@@ -76,20 +137,20 @@ def intArrayToBinaryString(arr):
 
 def binaryStringToString(binString):
     """
-    given a string of bytes, return its character equivalent 
+    convert a binary string to its character equivalent
 
     Args:
         binString (str): binary string
 
     Returns:
-        str: character string w/ bytes converted to chars
+        str: character string w/ each byte converted to a character using ascii
     """
     return intArrayToString(binaryStringToIntArray(binString))
 
 
 def stringToBinaryString(string):
     """
-    given a string of characters, return its binary equivalent 
+    converts a string into binary using ascii
 
     Args:
         string (str): character string
@@ -103,7 +164,7 @@ def stringToBinaryString(string):
 
 def matchLength(string, length):
     """
-    returns string edited so it reaches len length
+    returns string edited so it matches len length
 
     Args:
         string (str): original string
@@ -123,7 +184,8 @@ def matchLength(string, length):
 
 def elongate(string, length):
     """
-    elongates string into a new string of len length
+    elongates string into a new string of len length (concatenates string with itself until it 
+    reaches desired length)
 
     Args:
         string (str): original string
@@ -234,12 +296,21 @@ def unpack(arr):
         arr (array): nested array
 
     Returns:
-        array: array with all elements in it not nested
+        array: array with all elements in it as primitive types
     """
     return unpackRecurse(arr, [])
 
 
 def unpackRecurse(nested, all):
+    """recursive implementation of unpack()
+
+    Args:
+        nested (list): nested list
+        all (list): list to be returned, containing all primitive elements in nested
+
+    Returns:
+        list: unpacked list
+    """
     for sub in nested:
         if isinstance(sub, list):
             all = unpackRecurse(sub, all)
@@ -251,7 +322,7 @@ def unpackRecurse(nested, all):
 
 def addModular(arr, toAdd):
     """adds 1 to int array as if it were a binary number (i.e. keeping each element in the array within the 
-    range [0, mod] utilizing modular addition). 
+    range [0, mod]). 
 
     Args:
         arr (int array)
@@ -278,6 +349,19 @@ def addModular(arr, toAdd):
 
 
 def prepareBC(txt, key, binTxt, binKey, blen):
+    """prepares text, key, and number of blocks for use in a block cipher scheme
+
+    Args:
+        txt (str): plaintext or ciphertext to be split
+        key (str): key
+        binTxt (bool): true if txt is a binary string, false otherwise
+        binKey (bool): true if key is a binary string, false otherwise
+        blen (int): length of blocks that txt and key will be split into
+
+    Returns:
+        txt, key, blocks (int arr, int arr, int): returns txt as int array, key as int array, and 
+        int blocks that represents how many sublists of length blen are in txt
+    """
     # prepares text, key, and number of blocks for use in block cipher scheme
 
     txt = toIntArray(txt, binTxt)
@@ -294,8 +378,8 @@ def prepareBC(txt, key, binTxt, binKey, blen):
 
 def PRG(seedArr):
     """
-    length-doubling pseudo-random generator
-    can't be proven secure without proving P=NP
+    length-doubling pseudo-random generator. 
+    can't be proven secure without proving P=NP but
     indistinguishable from random given that the seed is uniform and not used for anything else
 
     Args:
@@ -328,8 +412,8 @@ def PRG(seedArr):
 
 def altPRF(k, x, binK=False, binX=False):
     """
-    pseudo-random function composed of PRGs - secure if PRG is secure
-    computationally intensive!!
+    pseudo-random function composed of PRGs - secure if PRG is secure. 
+    computationally intensive!! 
     traverses through a binary tree of height n
 
     Args:
@@ -366,7 +450,7 @@ def altPRF(k, x, binK=False, binX=False):
 
 def PRF(k, x):
     """
-    pseudo-random function 
+    pseudo-random function, 
     impossible to prove secure without proving P=NP, can possibly prove insecure
 
     Args:
@@ -397,7 +481,7 @@ def PRF(k, x):
 
 def PRP(k, v):
     """
-    4-round fiestel cipher PRP (invertible PRF)
+    4-round fiestel cipher PRP (invertible PRF) 
     based on PRF - secure if PRF is secure
 
     Args:
@@ -446,6 +530,15 @@ def PRPinv(k, v):
 
 
 def invalidRSAPrimes(p, q):
+    """returns true if p, q are invalid to be used to generate N in an RSA scheme
+
+    Args:
+        p (int): prime number
+        q (int): prime number
+
+    Returns:
+        bool: true if p, q are invalid, else false 
+    """
 
     return ((p == None) or (q == None) or (p == q) or not (isPrime(p) and isPrime(q)))
 
@@ -528,6 +621,15 @@ def getCoPrime(n):
 
 
 def gcd(m, n):
+    """returns greatest common denominator of m, n
+
+    Args:
+        m (int): 
+        n (int):
+
+    Returns:
+        int: gcd of m, n
+    """
     res = min(m, n)
 
     while res > 0:

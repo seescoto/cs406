@@ -8,8 +8,17 @@ blen = 4  # global variable for all block ciphers
 
 
 def OTP(plaintext, key, binaryPT=False, binaryKey=False):
-    # takes a key and a plaintext and XORS them to create the encrypted ciphertext
-    # binaryPT and binaryKey are bool variables that says if the plaintext/key is in binary format or a reg string
+    """OTP scheme - takes a plaintext and key and XOR's them to generate encrypted ciphertext.
+
+    Args:
+        plaintext (str): message to be encrypted
+        key (str): key value
+        binaryPT (bool, optional): true if plaintext is a binary string, false if character string. Defaults to False.
+        binaryKey (bool, optional): true if key is a binary string, false if character string. Defaults to False.
+
+    Returns:
+        ciphertext (str) : binary string of ciphertext
+    """
 
     # if no key given, return none
     if not key:
@@ -27,6 +36,16 @@ def OTP(plaintext, key, binaryPT=False, binaryKey=False):
 
 
 def ratchet(key, loops=1, binary=False):
+    """generates new keys using symmetric ratchet scheme (length doubling PRG)
+
+    Args:
+        key (str): original key, binary or character string
+        loops (int, optional): number of loops to go through in ratchet. Defaults to 1.
+        binary (bool, optional): true if key is a binary string, false if character string. Defaults to False.
+
+    Returns:
+        s, t (int arr, int arr): s is generator for next new key, t is new key
+    """
     # convert key to int array
     s = util.toIntArray(key, binary)
     halfway = len(s)  # index to split s and t
@@ -42,7 +61,7 @@ def ratchet(key, loops=1, binary=False):
 
 
 def encryptCBC(k, m, binK=False, binM=False):
-    """CBC block chaining
+    """CBC block chaining encryption
 
     Args:
         k (string): string (char or binary) that represents the key
@@ -74,7 +93,7 @@ def encryptCBC(k, m, binK=False, binM=False):
 
 
 def decryptCBC(k, c, binK=False, binC=False):
-    """decrypts ciphertext c with key k
+    """decrypts ciphertext c with key k in CBC block chaining
 
     Args:
         k (int array): key int array
@@ -103,7 +122,7 @@ def decryptCBC(k, c, binK=False, binC=False):
 
 
 def encryptCTR(k, m, binK=False, binM=False):
-    """CTR counter block chaining
+    """CTR counter block chaining encryption
 
     Args:
         k (string): string (char or binary) that represents the key
@@ -172,7 +191,7 @@ def decryptCTR(k, c, binK=False, binC=False):
 
 
 def encryptOFB(k, m, binK=False, binM=False):
-    """OFB (output feedback) block chaining
+    """OFB (output feedback) block chaining encryption
 
     Args:
         k (string): string (char or binary) that represents the key
@@ -247,8 +266,8 @@ def getKeysRSA(p=None, q=None):
 
     Returns:
         (p, q, N, e, d).
-        N = p * q,
-        e and d are multiplicative inverses so e * d % phi(N) = 1,
+        N (int) = p * q,
+        e (int) and d (int) are multiplicative inverses so e * d % phi(N) = 1,
         e is the public inverse, d is private
 
     """
