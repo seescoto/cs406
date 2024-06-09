@@ -211,8 +211,8 @@ def RSAGenKeys():
 
     # generate keys from p/q
     if request.form.get('genKeys'):
-        newP, newQ, N, e, d = schemes.getKeysRSA(p, q)
-        keys = {"p": newP, "q": newQ, "N": N, "e": e, "d": d}
+        p, q, N, e, d = schemes.getKeysRSA(p, q)
+        keys = {"p": p, "q": q, "N": N, "e": e, "d": d}
 
     return render_template('RSA.html', topbar=topbar, keys=keys, encryption=None)
 
